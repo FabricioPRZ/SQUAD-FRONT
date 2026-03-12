@@ -1,0 +1,43 @@
+@if (isOpen) {
+  <!-- Overlay -->
+  <div class="modal-overlay" (click)="close()"></div>
+
+  <!-- Panel simplificado: solo Cerrar Sesión -->
+  <div class="user-menu-panel" role="dialog" aria-label="Menú de usuario">
+
+    <!-- Botón cerrar -->
+    <button class="close-btn" (click)="close()" aria-label="Cerrar">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <!-- Perfil del usuario (solo lectura) -->
+    <div class="user-profile-section">
+      <div class="avatar-container">
+        <img class="user-avatar" [src]="userAvatar" [alt]="'Avatar de ' + userName" />
+        <div class="avatar-ring"></div>
+        <span class="online-indicator"></span>
+      </div>
+      <h2 class="user-name">{{ userName }}</h2>
+      <p class="user-email">{{ userEmail }}</p>
+    </div>
+
+    <div class="menu-divider"></div>
+
+    <!-- Solo Cerrar sesión -->
+    <div class="logout-section">
+      <button class="logout-btn" (click)="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        CERRAR SESIÓN
+      </button>
+    </div>
+
+  </div>
+}

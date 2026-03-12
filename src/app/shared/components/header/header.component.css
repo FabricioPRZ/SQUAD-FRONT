@@ -1,0 +1,414 @@
+/* ============================
+   App Header - Estilos Globales
+   ============================ */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  background: rgba(10, 8, 18, 0.8);
+  backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 24px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  z-index: 1100;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: all 0.3s ease;
+}
+
+
+.app-header.minimal {
+  height: 8px;
+  box-shadow: none;
+}
+
+/* Capa decorativa de brillo encima del fondo */
+.header-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.04) 0%,
+    transparent 55%,
+    rgba(0,0,0,0.25) 100%
+  );
+  pointer-events: none;
+}
+
+/* Partícula de brillo decorativa */
+.app-header::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: 180px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(160, 60, 255, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.app-header::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  right: 60px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(255, 60, 180, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ============================
+   Layout principal del header
+   ============================ */
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  gap: 16px;
+}
+
+/* ── Logo centrado ── */
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  pointer-events: none; /* El link interno sí tiene pointer-events */
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  pointer-events: all;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: filter  0.25s ease, transform 0.25s ease;
+}
+
+.header-logo {
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(193, 17, 159, 0.3));
+}
+
+.logo-link:hover .header-logo {
+  filter: drop-shadow(0 0 14px rgba(193, 17, 159, 0.65))
+          drop-shadow(0 0 30px rgba(134, 21, 165, 0.35));
+  transform: scale(1.05);
+}
+
+/* ============================
+   Lado Izquierdo: Barra de Búsqueda
+   ============================ */
+
+.header-left {
+  flex: 1;
+  max-width: 420px;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0 14px;
+  height: 42px;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+.search-bar:focus-within {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(160, 80, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(160, 80, 255, 0.12), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.search-icon {
+  width: 16px;
+  height: 16px;
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.search-bar:focus-within .search-icon {
+  color: rgba(160, 80, 255, 0.8);
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  font-family: inherit;
+  padding: 0 10px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.search-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.search-clear:hover {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.search-clear svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ============================
+   Lado Derecho: Notificaciones + Perfil
+   ============================ */
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ---- Botón de Notificaciones ---- */
+
+.notification-btn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+.notification-btn:hover,
+.notification-btn.active {
+  background: rgba(193, 17, 159, 0.15);
+  border-color: rgba(193, 17, 159, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(193, 17, 159, 0.2);
+}
+
+.notification-btn:active {
+  transform: translateY(0);
+}
+
+.bell-icon {
+  width: 18px;
+  height: 18px;
+  color: rgba(255, 255, 255, 0.75);
+  transition: color 0.2s ease;
+}
+
+.notification-btn:hover .bell-icon {
+  color: #fff;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: linear-gradient(135deg, #ff3cac, #784ba0);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid #0f1117;
+  line-height: 1;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 60, 172, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(255, 60, 172, 0); }
+}
+
+/* ---- Separador ---- */
+
+.header-separator {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 4px;
+}
+
+/* ---- Botón de Perfil ---- */
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 6px 12px 6px 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  height: 42px;
+  backdrop-filter: blur(8px);
+}
+
+.profile-btn:hover,
+.profile-btn.active {
+  background: rgba(193, 17, 159, 0.12);
+  border-color: rgba(193, 17, 159, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(193, 17, 159, 0.15);
+}
+
+.profile-btn:active {
+  transform: translateY(0);
+}
+
+/* ---- Info de texto del perfil ---- */
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.profile-name {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.profile-role {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.68rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* ---- Avatar ---- */
+
+.avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(160, 80, 255, 0.5);
+  transition: border-color 0.25s ease;
+  display: block;
+}
+
+.profile-btn:hover .avatar {
+  border-color: rgba(200, 100, 255, 0.8);
+}
+
+.avatar-status {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #0f1117;
+}
+
+/* ---- Chevron del perfil ---- */
+
+.chevron-icon {
+  width: 14px;
+  height: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.profile-btn:hover .chevron-icon {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.chevron-icon.rotated {
+  transform: rotate(180deg);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ============================
+   Responsive
+   ============================ */
+
+@media (max-width: 640px) {
+  .header-content {
+    padding: 0 16px;
+    gap: 10px;
+  }
+
+  .profile-info {
+    display: none;
+  }
+
+  .chevron-icon {
+    display: none;
+  }
+
+  .profile-btn {
+    padding: 6px 8px;
+    gap: 0;
+  }
+
+  .header-left {
+    max-width: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .search-input {
+    font-size: 0.8rem;
+  }
+}

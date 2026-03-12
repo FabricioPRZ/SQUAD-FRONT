@@ -1,0 +1,111 @@
+/* =============================================
+   Saved Posts — SQUADUP (Home Vibe)
+   ============================================= */
+
+.page-wrapper {
+  width: 100%; min-height: 100vh;
+  background-image: url('/images/Background.png');
+  background-size: cover; background-position: center; background-attachment: fixed;
+  display: flex; flex-direction: column; position: relative;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+}
+
+.bg-overlay {
+  position: fixed; inset: 0; background: rgba(5,4,10,0.75);
+  z-index: 0; pointer-events: none;
+}
+
+:host ::ng-deep .app-header { position: sticky; top: 0; z-index: 1100; width: 100%; }
+
+.page-content {
+  position: relative; z-index: 1; flex: 1;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 36px 40px 60px; box-sizing: border-box;
+  max-width: 1400px; margin: 0 auto; width: 100%;
+}
+
+/* ── Banner ── */
+.title-banner {
+  display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, #a0692a 0%, #c8891e 50%, #a0692a 100%);
+  color: #fff; font-size: 1.55rem; font-weight: 700; letter-spacing: 1.5px;
+  padding: 13px 60px; border-radius: 12px; margin-bottom: 28px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 30px rgba(180,120,30,0.2);
+}
+
+.title-banner svg { width: 26px; height: 26px; flex-shrink: 0; }
+
+/* ── Controles ── */
+.controls-bar {
+  width: 100%; display: flex; align-items: center;
+  justify-content: flex-start; margin-bottom: 28px; gap: 16px;
+}
+
+.filters { display: flex; gap: 10px; }
+
+.filter-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 22px; border-radius: 9999px;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  background: transparent; color: rgba(255,255,255,0.65);
+  font-size: 0.88rem; font-weight: 500; cursor: pointer;
+  font-family: inherit; transition: all 0.2s;
+}
+
+.filter-btn svg { width: 15px; height: 15px; }
+
+.filter-btn:hover { border-color: rgba(34,197,94,0.5); color: #fff; }
+
+.filter-btn.active {
+  background: rgba(34,197,94,0.12); border-color: #22c55e;
+  color: #fff; font-weight: 700; box-shadow: 0 0 12px rgba(34,197,94,0.2);
+}
+
+.filter-own.active {
+  background: rgba(134,21,165,0.14); border-color: #8615A5;
+  box-shadow: 0 0 12px rgba(134,21,165,0.25);
+}
+
+/* ── Grid de posts ── */
+.posts-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Wrapper para superponer botón de eliminar */
+.post-wrapper { position: relative; }
+
+.delete-post-btn {
+  position: absolute; top: 10px; right: 10px; z-index: 10;
+  width: 34px; height: 34px; border-radius: 10px;
+  background: rgba(10,8,18,0.75); backdrop-filter: blur(8px);
+  border: 1px solid rgba(248,113,113,0.35);
+  color: rgba(248,113,113,0.7); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.delete-post-btn svg { width: 15px; height: 15px; }
+
+.post-wrapper:hover .delete-post-btn {
+  opacity: 1;
+}
+
+.delete-post-btn:hover {
+  background: rgba(239,68,68,0.2);
+  border-color: #f87171; color: #f87171;
+  transform: scale(1.08);
+}
+
+/* ── Estado vacío ── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 16px; padding: 80px 20px; color: rgba(255,255,255,0.25);
+}
+
+.empty-state svg { width: 64px; height: 64px; }
+.empty-state p { font-size: 1rem; margin: 0; }

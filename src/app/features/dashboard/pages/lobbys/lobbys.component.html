@@ -1,0 +1,65 @@
+<div class="page-wrapper">
+  <div class="bg-overlay"></div>
+
+  <app-header [isMinimal]="false"></app-header>
+
+  <main class="page-content">
+
+    <!-- Banner de título -->
+    <div class="title-banner">
+      <svg class="title-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      Mis Lobbys
+    </div>
+
+    <!-- Barra de filtros + botón crear -->
+    <div class="controls-bar">
+      <div class="filters">
+        <button class="filter-btn" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">
+          Todas
+        </button>
+        <button class="filter-btn" [class.active]="activeFilter() === 'owned'" (click)="setFilter('owned')">
+          Mis Lobbys
+        </button>
+        <button class="filter-btn joined" [class.active]="activeFilter() === 'joined'" (click)="setFilter('joined')">
+          Unido
+        </button>
+      </div>
+
+      <a class="create-btn" [routerLink]="['/dashboard/groups/create']">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Crear Lobby
+      </a>
+    </div>
+
+    <!-- Grid de cards -->
+    @if (filteredLobbies().length > 0) {
+      <div class="lobbies-grid">
+        @for (lobby of filteredLobbies(); track lobby.id) {
+          <app-lobby-card
+            [lobby]="lobby"
+            (edit)="onEdit($event)"
+            (delete)="onDelete($event)"
+            (leave)="onLeave($event)">
+          </app-lobby-card>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <p>No hay lobbys en esta categoría</p>
+        <a [routerLink]="['/dashboard/groups/create']" class="create-btn">Crear mi primer Lobby</a>
+      </div>
+    }
+
+  </main>
+</div>

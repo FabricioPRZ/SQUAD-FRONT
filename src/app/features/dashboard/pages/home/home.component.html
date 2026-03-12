@@ -1,0 +1,36 @@
+<div class="home-container">
+  <!-- Overlay oscuro sobre el fondo -->
+  <div class="bg-overlay"></div>
+
+  <!-- Header en la parte superior -->
+  <app-header [isMinimal]="false"></app-header>
+
+  <div class="main-layout">
+    <!-- Sidebar izquierdo: grupos -->
+    <app-sidebar (groupSelected)="onGroupSelected($event)"></app-sidebar>
+
+    <!-- Panel de Chat (izquierdo, aparece al seleccionar grupo) -->
+    @if (isChatOpen && selectedGroup) {
+      <aside class="chat-panel-wrapper">
+        <app-chat
+          [group]="selectedGroup"
+          (closeChat)="closeChat()">
+        </app-chat>
+      </aside>
+    }
+
+    <!-- Feed de publicaciones (columna central) -->
+    <main class="content-area" [class.chat-open]="isChatOpen">
+      <div class="feed-column">
+        @for (post of posts; track post.id) {
+          <app-card [post]="post"></app-card>
+        }
+      </div>
+    </main>
+
+    <!-- Sidebar derecho: opciones del usuario (siempre visible) -->
+    <aside class="user-sidebar-wrapper">
+      <app-user-sidebar (optionSelected)="onUserOption($event)"></app-user-sidebar>
+    </aside>
+  </div>
+</div>

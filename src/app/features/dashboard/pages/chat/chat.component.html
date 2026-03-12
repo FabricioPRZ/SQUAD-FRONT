@@ -1,0 +1,95 @@
+<div class="chat-panel">
+
+  <!-- ── Header del Chat ── -->
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="group-avatar">
+        <img [src]="group.imageUrl" [alt]="group.name">
+      </div>
+      <span class="group-name">{{ group.name }}</span>
+    </div>
+    <button class="close-btn" (click)="close()" title="Cerrar chat">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ── Lista de Mensajes ── -->
+  <div class="messages-container" #messagesContainer>
+    @for (msg of messages; track msg.id) {
+
+      <!-- Mensaje de otro usuario -->
+      @if (!msg.isOwn) {
+        <div class="message-row other">
+          <!-- Avatar genérico -->
+          <div class="msg-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+          </div>
+          <div class="message-content">
+            <span class="sender-name">{{ msg.senderName }}</span>
+            @if (msg.text) {
+              <div class="bubble other-bubble">{{ msg.text }}</div>
+            }
+            @if (msg.imageUrl) {
+              <div class="bubble other-bubble img-bubble">
+                <img [src]="msg.imageUrl" alt="Imagen compartida" class="chat-img">
+              </div>
+            }
+            <span class="msg-time other-time">{{ msg.timestamp }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- Mensaje propio -->
+      @if (msg.isOwn) {
+        <div class="message-row own">
+          <div class="message-content own-content">
+            @if (msg.text) {
+              <div class="bubble own-bubble">{{ msg.text }}</div>
+            }
+            @if (msg.imageUrl) {
+              <div class="bubble own-bubble img-bubble">
+                <img [src]="msg.imageUrl" alt="Imagen compartida" class="chat-img">
+              </div>
+            }
+            <span class="msg-time own-time">{{ msg.timestamp }}</span>
+          </div>
+        </div>
+      }
+
+    }
+  </div>
+
+  <!-- ── Área de Input ── -->
+  <div class="chat-input-area">
+    <!-- Input oculto para archivos -->
+    <input #fileInput type="file" accept="image/*" style="display:none" (change)="onFileSelected($event)">
+
+    <!-- Botón adjuntar imagen -->
+    <button class="attach-btn" (click)="openFileSelector()" title="Adjuntar imagen">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+
+    <input
+      type="text"
+      class="message-input"
+      [(ngModel)]="newMessage"
+      placeholder="Mensaje..."
+      (keydown)="onEnterKey($event)">
+
+    <!-- Botón enviar -->
+    <button class="send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()" title="Enviar">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+      </svg>
+    </button>
+  </div>
+
+</div>

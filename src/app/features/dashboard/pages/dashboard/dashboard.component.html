@@ -1,0 +1,15 @@
+<div class="dashboard-layout">
+  <!-- Sidebar Izquierdo -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+    
+    <!-- Contenido temporal si no hay ruta hija -->
+    <div class="welcome-container">
+      <h1>Bienvenido a SQUADUP</h1>
+      <p>Selecciona un grupo a la izquierda o crea uno nuevo para empezar.</p>
+    </div>
+  </main>
+</div>

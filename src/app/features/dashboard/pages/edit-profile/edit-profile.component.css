@@ -1,0 +1,200 @@
+/* =============================================
+   Edit Profile — SQUADUP (Home Vibe)
+   ============================================= */
+
+.page-wrapper {
+  width: 100%; min-height: 100vh;
+  background-image: url('/images/Background.png');
+  background-size: cover; background-position: center; background-attachment: fixed;
+  display: flex; flex-direction: column; position: relative;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+}
+
+.bg-overlay {
+  position: fixed; inset: 0; background: rgba(5,4,10,0.75);
+  z-index: 0; pointer-events: none;
+}
+
+:host ::ng-deep .app-header { position: sticky; top: 0; z-index: 1100; width: 100%; }
+
+.page-content {
+  position: relative; z-index: 1; flex: 1;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 36px 20px 60px; box-sizing: border-box;
+}
+
+.title-banner {
+  background: linear-gradient(135deg, #a0692a 0%, #c8891e 50%, #a0692a 100%);
+  color: #fff; font-size: 1.55rem; font-weight: 700; letter-spacing: 2px;
+  padding: 13px 80px; border-radius: 12px; margin-bottom: 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 30px rgba(180,120,30,0.2);
+  text-align: center;
+}
+
+.profile-card {
+  width: 100%; max-width: 760px;
+  background: rgba(18,15,26,0.82); backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.07); border-radius: 18px;
+  padding: 32px; box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 22px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+
+/* ── Avatar ── */
+.avatar-section {
+  display: flex; align-items: center; gap: 20px;
+}
+
+.avatar-container {
+  position: relative; width: 90px; height: 90px; flex-shrink: 0;
+}
+
+.avatar-img, .avatar-placeholder {
+  width: 90px; height: 90px; border-radius: 50%; object-fit: cover;
+}
+
+.avatar-placeholder {
+  background: rgba(134,21,165,0.2);
+  border: 2px solid rgba(134,21,165,0.4);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.4);
+}
+
+.avatar-placeholder svg { width: 44px; height: 44px; }
+
+.avatar-edit-overlay {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; cursor: pointer; transition: opacity 0.2s;
+  color: #fff;
+}
+
+.avatar-edit-overlay svg { width: 22px; height: 22px; }
+
+.avatar-container:hover .avatar-edit-overlay { opacity: 1; }
+
+.avatar-actions { display: flex; flex-direction: column; gap: 6px; }
+
+.avatar-hint { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
+
+.remove-avatar-btn {
+  background: none; border: 1px solid rgba(248,113,113,0.4); color: #f87171;
+  border-radius: 8px; padding: 5px 12px; font-size: 0.75rem; cursor: pointer;
+  transition: all 0.2s; font-family: inherit; width: fit-content;
+}
+
+.remove-avatar-btn:hover { background: rgba(248,113,113,0.1); }
+
+/* ── Divider / Section title ── */
+.form-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 0 -8px; }
+
+.section-title {
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 1.8px;
+  color: rgba(255,255,255,0.3); margin-bottom: -10px;
+}
+
+/* ── Grid de campos ── */
+.fields-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+
+.field-block.full-width { grid-column: 1 / -1; }
+
+.field-label {
+  display: block; font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.38); margin-bottom: 8px;
+}
+
+.profile-input, .profile-textarea {
+  width: 100%; background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+  padding: 13px 16px; color: rgba(255,255,255,0.85);
+  font-size: 0.88rem; font-family: inherit; box-sizing: border-box;
+  outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-input::placeholder, .profile-textarea::placeholder { color: rgba(255,255,255,0.2); }
+
+.profile-input:focus, .profile-textarea:focus {
+  border-color: rgba(134,21,165,0.5);
+  box-shadow: 0 0 0 3px rgba(134,21,165,0.12);
+}
+
+.profile-textarea { height: 90px; resize: none; }
+
+/* Prefix @ */
+.input-prefix-wrap { position: relative; display: flex; align-items: center; }
+
+.input-prefix {
+  position: absolute; left: 14px;
+  color: rgba(193,17,159,0.7); font-weight: 700; font-size: 0.9rem; pointer-events: none;
+}
+
+.profile-input.with-prefix { padding-left: 28px; }
+
+/* ── Sección contraseña ── */
+.toggle-pass-btn {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 12px 16px; color: rgba(255,255,255,0.65);
+  font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  transition: all 0.2s; width: 100%;
+}
+
+.toggle-pass-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+.toggle-pass-btn:hover { background: rgba(134,21,165,0.1); border-color: rgba(134,21,165,0.3); color: #fff; }
+
+.chevron { margin-left: auto; transition: transform 0.25s; }
+.chevron.open { transform: rotate(180deg); }
+
+.pass-section { margin-top: -8px; }
+
+/* ── Botón Mostrar/Ocultar Contraseña ── */
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Botones ── */
+.actions-row { display: flex; gap: 14px; }
+
+.btn-cancel {
+  flex: 1; padding: 14px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.7); font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+
+.btn-cancel:hover { background: rgba(255,255,255,0.09); color: #fff; }
+
+.btn-save {
+  flex: 2; padding: 14px; border-radius: 10px; border: none;
+  background: linear-gradient(135deg, #8615A5 0%, #C1119F 50%, #D9006C 100%);
+  color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer;
+  font-family: inherit; letter-spacing: 0.5px;
+  box-shadow: 0 4px 20px rgba(134,21,165,0.4); transition: all 0.25s;
+}
+
+.btn-save:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(193,17,159,0.5); }
+.btn-save:active { transform: translateY(0); }

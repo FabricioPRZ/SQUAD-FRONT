@@ -1,0 +1,120 @@
+.home-container {
+  width: 100%;
+  min-height: 100vh;
+  background-image: url('/images/Background.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ── Overlay oscuro sobre fondo ── */
+.bg-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 4, 10, 0.68);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===================================================
+   Layout principal
+   =================================================== */
+
+.main-layout {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===================================================
+   Área de contenido del feed
+   =================================================== */
+
+.content-area {
+  flex: 1;
+  margin-left: 72px;
+  margin-right: 240px;   /* siempre deja espacio al user-sidebar */
+  padding: 28px 24px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  transition: margin-left 0.3s ease;
+}
+
+.content-area.chat-open {
+  margin-left: calc(72px + 480px);   /* sidebar + chat */
+}
+
+/* ===================================================
+   Feed: columna centrada estilo Facebook
+   =================================================== */
+
+.feed-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 860px;
+}
+
+/* ===================================================
+   Panel lateral de Chat (izquierdo)
+   =================================================== */
+
+.chat-panel-wrapper {
+  width: 480px;
+  height: calc(100vh - 70px);
+  position: fixed;
+  left: 72px;
+  right: auto;
+  top: 70px;
+  bottom: 0;
+  border-right: 1.5px solid rgba(134, 21, 165, 0.4);
+  z-index: 1050;
+  animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  margin: 0;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+/* ===================================================
+   Sidebar de usuario (derecho, siempre visible)
+   =================================================== */
+
+.user-sidebar-wrapper {
+  width: 240px;
+  height: calc(100vh - 70px);
+  position: fixed;
+  right: 0;
+  top: 70px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* ===================================================
+   Header y Sidebar de grupos sobre el fondo
+   =================================================== */
+
+:host ::ng-deep .app-header {
+  background: rgba(10, 8, 18, 0.8) !important;
+  backdrop-filter: blur(14px);
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+}
+
+:host ::ng-deep .sidebar {
+  background: rgba(13, 11, 22, 0.85) !important;
+  backdrop-filter: blur(14px);
+  --sidebar-top: 70px;
+}

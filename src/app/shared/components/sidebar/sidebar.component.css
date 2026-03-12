@@ -1,0 +1,137 @@
+/* =============================================
+   Sidebar Layout - Estilo SQUADUP
+   ============================================= */
+
+.sidebar {
+  width: 72px;
+  height: calc(100vh - 70px);
+  background-color: #111214;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  box-sizing: border-box;
+  border-right: none;
+  position: fixed;
+  left: 0;
+  top: var(--sidebar-top, 0);
+  z-index: 1000;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
+/* Ocultar scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 0px;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.action-item {
+  margin-bottom: 8px;
+}
+
+.add-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(0, 168, 255, 0.12);
+  border: 1.5px solid rgba(0, 168, 255, 0.3);
+  color: #00a8ff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 12px rgba(0, 168, 255, 0.2);
+}
+
+.add-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.add-btn:hover {
+  border-radius: 16px;
+  transform: translateY(-2px);
+  background: rgba(0, 168, 255, 0.2);
+  border-color: rgba(0, 168, 255, 0.5);
+  box-shadow: 0 8px 20px rgba(0, 168, 255, 0.3);
+}
+
+.separator {
+  width: 32px;
+  height: 2px;
+  background-color: #333;
+  margin: 4px 0;
+  border-radius: 1px;
+}
+
+.groups-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+}
+
+.group-item {
+  position: relative;
+  cursor: pointer;
+  padding: 0 12px;
+}
+
+.group-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #333;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 2px solid transparent;
+}
+
+.group-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.group-item:hover .group-icon-wrapper {
+  border-radius: 16px;
+  border-color: #D9006C;
+}
+
+.active-indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 8px;
+  background-color: white;
+  border-radius: 0 4px 4px 0;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.group-item:hover .active-indicator {
+  opacity: 1;
+  height: 20px;
+}
+
+.group-item.active .active-indicator {
+  opacity: 1;
+  height: 40px;
+}
+
+.group-item.active .group-icon-wrapper {
+  border-radius: 16px;
+  border-color: #8615A5;
+}

@@ -1,0 +1,50 @@
+@if (confirmService.isOpen()) {
+  <!-- Backdrop -->
+  <div class="backdrop" (click)="confirmService.cancel()"></div>
+
+  <!-- Dialog -->
+  <div class="dialog" [class]="'dialog-' + confirmService.options().type">
+
+    <!-- Ícono -->
+    <div class="dialog-icon">
+      @if (confirmService.options().type === 'danger') {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      }
+      @if (confirmService.options().type === 'warning') {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      }
+      @if (confirmService.options().type === 'success') {
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+      }
+    </div>
+
+    <!-- Texto -->
+    <div class="dialog-body">
+      <h3 class="dialog-title">{{ confirmService.options().title }}</h3>
+      @if (confirmService.options().message) {
+        <p class="dialog-message">{{ confirmService.options().message }}</p>
+      }
+    </div>
+
+    <!-- Botones -->
+    <div class="dialog-actions">
+      <button class="btn-cancel-dialog" (click)="confirmService.cancel()">
+        {{ confirmService.options().cancelText }}
+      </button>
+      <button class="btn-confirm-dialog" [class]="'btn-confirm-' + confirmService.options().type" (click)="confirmService.confirm()">
+        {{ confirmService.options().confirmText }}
+      </button>
+    </div>
+
+  </div>
+}

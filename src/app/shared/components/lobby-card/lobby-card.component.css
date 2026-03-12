@@ -1,0 +1,219 @@
+/* =============================================
+   Lobby Card Component — SQUADUP
+   ============================================= */
+
+:host {
+  display: block;
+}
+
+.lobby-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(18, 15, 28, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid transparent;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+.lobby-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Borde neón según rol */
+.lobby-card.is-owner {
+  border-color: rgba(193, 17, 159, 0.55);
+  box-shadow: 0 0 20px rgba(193, 17, 159, 0.2), 0 6px 24px rgba(0,0,0,0.5);
+}
+
+.lobby-card.is-owner:hover {
+  box-shadow: 0 0 30px rgba(193, 17, 159, 0.35), 0 12px 32px rgba(0,0,0,0.5);
+}
+
+.lobby-card.is-joined {
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.12), 0 6px 24px rgba(0,0,0,0.5);
+}
+
+.lobby-card.is-joined:hover {
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.25), 0 12px 32px rgba(0,0,0,0.5);
+}
+
+/* ── Área de imagen ── */
+.card-image {
+  position: relative;
+  height: 130px;
+  background: rgba(255,255,255,0.05);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(10, 8, 18, 0.85) 100%);
+}
+
+/* Insignia de corona */
+.owner-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+  z-index: 1;
+}
+
+.owner-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Badge de miembros */
+.member-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.85);
+  z-index: 1;
+}
+
+.member-badge svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ── Cuerpo ── */
+.card-body {
+  padding: 14px 16px 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lobby-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lobby-desc {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.38);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tags-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.tag-chip {
+  font-size: 0.62rem;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* ── Botones de acción ── */
+.card-actions {
+  padding: 10px 16px 14px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.action-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* Editar */
+.edit-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.edit-btn:hover {
+  background: rgba(134, 21, 165, 0.2);
+  color: #C1119F;
+  border-color: rgba(193, 17, 159, 0.4);
+}
+
+/* Eliminar */
+.delete-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Abandonar */
+.leave-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 12px;
+}
+
+.leave-btn:hover {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.4);
+}

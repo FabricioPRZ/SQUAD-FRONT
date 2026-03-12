@@ -1,0 +1,58 @@
+<div class="landing-container">
+  <!-- Sección Hero -->
+  <section class="hero-section">
+    <div class="hero-image-container">
+      <img src="/images/Landing.Background.png" alt="SquadUp Background" class="hero-image">
+      <div class="hero-overlay"></div>
+    </div>
+    
+    <!-- Contenido sobre la imagen -->
+    <div class="hero-content">
+      <h1 class="hero-title">SQUADUP</h1>
+      <p class="hero-subtitle">La victoria sabe mejor en equipo.</p>
+    </div>
+  </section>
+
+  <!-- Zona de transición con el botón -->
+  <div class="action-divider">
+    <button class="login-btn" [routerLink]="['/login']">
+      <span>INICIAR SESIÓN</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Sección scrolleable de información -->
+  <section class="info-section">
+    <div class="container">
+      <h2 class="section-title">¿Por qué elegir SQUADUP?</h2>
+      
+      <div class="features-grid">
+        @for (feature of features; track feature.title) {
+          <div class="feature-card">
+            <div class="feature-icon">{{ feature.icon }}</div>
+            <h3 class="feature-title">{{ feature.title }}</h3>
+            <p class="feature-desc">{{ feature.description }}</p>
+          </div>
+        }
+      </div>
+
+      <div class="join-us-banner">
+        <h3>¿Listo para el siguiente nivel?</h3>
+        <p>Únete hoy a la comunidad más grande de jugadores.</p>
+        <button class="cta-secondary">REGISTRARSE</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer simple para la landing -->
+  <footer class="landing-footer">
+    <p>&copy; 2026 SQUADUP. Todos los derechos reservados.</p>
+    <div class="footer-links">
+      <a href="#">Privacidad</a>
+      <a href="#">Términos</a>
+      <a href="#">Contacto</a>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,41 @@
+/* Reutilizamos los mismos estilos que en el registro para mantener consistencia */
+@import '../register/register.component.css';
+
+/* Ajustes específicos para el login si fueran necesarios */
+.auth-title {
+  text-transform: uppercase;
+}
+
+.password-group {
+  position: relative;
+}
+
+.password-group input {
+  padding-right: 50px !important;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: #8615A5;
+}
+
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+

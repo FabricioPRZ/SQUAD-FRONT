@@ -1,0 +1,160 @@
+/* =============================================
+   Confirm Dialog — SQUADUP
+   ============================================= */
+
+/* ── Backdrop ── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 3, 10, 0.72);
+  backdrop-filter: blur(6px);
+  z-index: 9000;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ── Modal ── */
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9001;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(20, 17, 30, 0.96);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 32px 28px 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  animation: dialogIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Borde top de color por tipo */
+.dialog-danger  { border-top: 2px solid rgba(248, 113, 113, 0.6); }
+.dialog-warning { border-top: 2px solid rgba(245, 158, 11, 0.6);  }
+.dialog-success { border-top: 2px solid rgba(34, 197, 94, 0.6);   }
+
+/* ── Ícono ── */
+.dialog-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dialog-danger  .dialog-icon { background: rgba(248, 113, 113, 0.12); color: #f87171; }
+.dialog-warning .dialog-icon { background: rgba(245, 158, 11,  0.12); color: #f59e0b; }
+.dialog-success .dialog-icon { background: rgba(34, 197, 94,  0.12);  color: #22c55e; }
+
+.dialog-icon svg { width: 26px; height: 26px; }
+
+/* ── Texto ── */
+.dialog-body { display: flex; flex-direction: column; gap: 8px; }
+
+.dialog-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.dialog-message {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Botones ── */
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.btn-cancel-dialog {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn-cancel-dialog:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #fff;
+}
+
+.btn-confirm-dialog {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s;
+}
+
+.btn-confirm-danger {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(231, 76, 60, 0.35);
+}
+
+.btn-confirm-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
+}
+
+.btn-confirm-warning {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+}
+
+.btn-confirm-warning:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+}
+
+.btn-confirm-success {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+}
+
+.btn-confirm-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+}
+
+/* ── Animaciones ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dialogIn {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.95); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}

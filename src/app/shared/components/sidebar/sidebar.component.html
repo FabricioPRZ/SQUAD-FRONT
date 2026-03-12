@@ -1,0 +1,33 @@
+<aside class="sidebar">
+  <div class="sidebar-content">
+    
+    <!-- Botón Crear Grupo -->
+    <div class="action-item">
+      <button class="add-btn" [routerLink]="['/dashboard/groups/create']" title="Crear Grupo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Lista de Grupos -->
+    <div class="groups-list">
+      @for (group of groups; track group.id) {
+        <div 
+          class="group-item" 
+          [class.active]="activeGroupId === group.id"
+          [title]="group.name"
+          (click)="selectGroup(group)">
+          <div class="group-icon-wrapper">
+            <img [src]="group.imageUrl" [alt]="group.name" class="group-icon">
+          </div>
+          <div class="active-indicator"></div>
+        </div>
+      }
+    </div>
+
+  </div>
+</aside>

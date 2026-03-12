@@ -1,0 +1,206 @@
+/* =============================================
+   Post Card - Estilo SQUADUP
+   ============================================= */
+
+:host {
+  display: block;
+}
+
+.post-card {
+  background: rgba(20, 18, 28, 0.85);
+  border: 1.5px solid rgba(134, 21, 165, 0.5);
+  border-radius: 20px;
+  overflow: hidden;
+  width: 100%;
+  box-shadow:
+    0 0 15px rgba(134, 21, 165, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  backdrop-filter: blur(16px);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 25px rgba(193, 17, 159, 0.35),
+    0 16px 48px rgba(0, 0, 0, 0.6);
+  border-color: rgba(193, 17, 159, 0.75);
+}
+
+/* =============================================
+   Header
+   ============================================= */
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =============================================
+   Avatar + Badge del Grupo
+   ============================================= */
+
+.avatar-wrapper {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.user-avatar-generic {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(134, 21, 165, 0.4) 0%, rgba(193, 17, 159, 0.4) 100%);
+  border: 2px solid rgba(134, 21, 165, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+
+.user-avatar-generic svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Badge del grupo: pequeño círculo en la esquina inferior derecha del avatar */
+.group-badge {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(20, 18, 28, 1);
+  box-shadow: 0 0 6px rgba(0, 168, 255, 0.6);
+}
+
+.group-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* =============================================
+   Nombre y Timestamp
+   ============================================= */
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.username {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.timestamp {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+/* =============================================
+   Botón de Guardar (Bookmark)
+   ============================================= */
+
+.save-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.save-btn svg {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.save-btn:hover {
+  color: #00a8ff;
+  background: rgba(0, 168, 255, 0.1);
+}
+
+.save-btn.saved {
+  color: #00a8ff;
+}
+
+.save-btn.saved svg {
+  transform: scale(1.2);
+}
+
+.save-btn:active svg {
+  transform: scale(0.9);
+}
+
+/* =============================================
+   Imagen del Post
+   ============================================= */
+
+.card-image-wrapper {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.post-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.post-card:hover .post-image {
+  transform: scale(1.03);
+}
+
+/* Placeholder cuando no hay imagen */
+.image-placeholder {
+  width: 100%;
+  height: 220px;
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(134, 21, 165, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.image-placeholder svg {
+  width: 40px;
+  height: 40px;
+}
+
+.image-placeholder span {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
