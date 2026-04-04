@@ -4,13 +4,17 @@
     <div class="user-info">
       <!-- Avatar del usuario con la imagen del grupo superpuesta -->
       <div class="avatar-wrapper">
-        <!-- Avatar genérico -->
-      <div class="user-avatar-generic">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-        </svg>
-      </div>
-      <div class="group-badge" [title]="post.groupName">
+        @if (post.authorAvatarUrl) {
+          <img class="user-avatar-img" [src]="post.authorAvatarUrl" [alt]="post.authorUsername">
+        } @else {
+          <!-- Avatar genérico -->
+          <div class="user-avatar-generic">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+          </div>
+        }
+        <div class="group-badge" [title]="post.groupName">
           <img class="group-img" [src]="post.groupImage" [alt]="post.groupName">
         </div>
       </div>

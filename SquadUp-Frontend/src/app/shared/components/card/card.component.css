@@ -56,6 +56,15 @@
   flex-shrink: 0;
 }
 
+.user-avatar-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(134, 21, 165, 0.6);
+  flex-shrink: 0;
+}
+
 .user-avatar-generic {
   width: 44px;
   height: 44px;
