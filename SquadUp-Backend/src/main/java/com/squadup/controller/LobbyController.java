@@ -49,6 +49,12 @@ public class LobbyController {
         return ResponseEntity.ok(lobbyService.getJoinedLobbies(resolveUserId(principal)));
     }
 
+    /** GET /api/lobbies/by-tag?tag=Competitivo → Buscar lobbies por tag */
+    @GetMapping("/by-tag")
+    public ResponseEntity<List<LobbyResponse>> byTag(@RequestParam String tag) {
+        return ResponseEntity.ok(lobbyService.findByTag(tag));
+    }
+
     /** PUT /api/lobbies/{id} → Editar Lobby */
     @PutMapping("/{id}")
     public ResponseEntity<LobbyResponse> update(

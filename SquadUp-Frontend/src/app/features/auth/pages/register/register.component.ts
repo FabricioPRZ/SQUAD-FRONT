@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
@@ -15,7 +15,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
 export class RegisterComponent {
   userData = {
     fullName: '',
-    username: '',   // era 'nickname' — corregido para coincidir con el backend
+    username: '',
     email: '',
     password: '',
     confirmPassword: ''

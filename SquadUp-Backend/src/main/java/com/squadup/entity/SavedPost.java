@@ -29,6 +29,6 @@ public class SavedPost {
     private Post post;
 
     @CreationTimestamp
-    @Column(name = "saved_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "saved_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime savedAt;
 }

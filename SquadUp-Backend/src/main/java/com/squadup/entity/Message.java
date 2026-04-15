@@ -2,7 +2,6 @@ package com.squadup.entity;
 
 import com.squadup.entity.enums.MessageStatus;
 import com.squadup.entity.enums.MessageType;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
@@ -22,10 +21,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
 
 import java.time.OffsetDateTime;
-import java.util.Map;
 
 /**
  * Mensaje de chat en tiempo real dentro de un lobby.
@@ -80,19 +77,18 @@ public class Message {
     @Builder.Default
     private MessageStatus status = MessageStatus.SENT;
 
-    /** JSONB — adjuntos: {url, filename, size, width, height} */
-    @Type(JsonBinaryType.class)
-    @Column(name = "attachment", columnDefinition = "jsonb")
-    private Map<String, Object> attachment;
+    /** JSON — adjuntos: {url, filename, size, width, height} */
+    @Column(name = "attachment", columnDefinition = "JSON")
+    private String attachment;
 
     @CreationTimestamp
-    @Column(name = "sent_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "sent_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime sentAt;
 
-    @Column(name = "edited_at", columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "edited_at", columnDefinition = "DATETIME(6)")
     private OffsetDateTime editedAt;
 
     /** Soft-delete */
-    @Column(name = "deleted_at", columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "deleted_at", columnDefinition = "DATETIME(6)")
     private OffsetDateTime deletedAt;
 }

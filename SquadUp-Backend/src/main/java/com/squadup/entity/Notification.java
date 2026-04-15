@@ -1,7 +1,6 @@
 package com.squadup.entity;
 
 import com.squadup.entity.enums.NotificationType;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,10 +19,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
 
 import java.time.OffsetDateTime;
-import java.util.Map;
 
 /**
  * Notificación en tiempo real.
@@ -55,19 +52,18 @@ public class Notification {
     @Column(name = "notif_type", nullable = false)
     private NotificationType notifType;
 
-    /** JSONB nativo PostgreSQL — Hibernate 6 API (@Type con clase directa) */
-    @Type(JsonBinaryType.class)
-    @Column(name = "payload", columnDefinition = "jsonb")
-    private Map<String, Object> payload;
+    /** JSON — contexto de la notificación según su tipo. Compatible con MySQL 5.7+ */
+    @Column(name = "payload", columnDefinition = "JSON")
+    private String payload;
 
     @Column(name = "is_read", nullable = false)
     @Builder.Default
     private Boolean isRead = false;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime createdAt;
 
-    @Column(name = "read_at", columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "read_at", columnDefinition = "DATETIME(6)")
     private OffsetDateTime readAt;
 }

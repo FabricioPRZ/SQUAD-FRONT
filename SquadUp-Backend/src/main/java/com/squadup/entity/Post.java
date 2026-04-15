@@ -46,15 +46,15 @@ public class Post {
     private Boolean requiresApproval = false;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime updatedAt;
 
     /** Soft-delete: NULL = activo */
-    @Column(name = "deleted_at", columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "deleted_at", columnDefinition = "DATETIME(6)")
     private OffsetDateTime deletedAt;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)

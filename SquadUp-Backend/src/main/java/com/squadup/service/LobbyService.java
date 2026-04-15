@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class LobbyService {
     private final LobbyJoinRequestRepository joinReqRepo;
     private final GameRepository gameRepo;
     private final UserRepository userRepo;
+    private final LobbyTagRepository lobbyTagRepo;
     private final NotificationService notificationService;
 
     /** Vista "Crear Lobby" */
@@ -42,10 +43,10 @@ public class LobbyService {
                 .name(req.getName()).description(req.getDescription())
                 .lobbyType(req.getLobbyType()).privacy(req.getPrivacy())
                 .maxMembers(req.getMaxMembers())
-                .tags(req.getTags() != null ? req.getTags().toArray(new String[0]) : null)
                 .build();
 
         lobbyRepo.save(lobby);
+        saveTagsForLobby(lobby, req.getTags());
 
         // El creador es automáticamente miembro con rol OWNER
         memberRepo.save(LobbyMember.builder()
@@ -81,12 +82,14 @@ public class LobbyService {
         lobby.setLobbyType(req.getLobbyType());
         lobby.setPrivacy(req.getPrivacy());
         lobby.setMaxMembers(req.getMaxMembers());
-        lobby.setTags(req.getTags() != null ? req.getTags().toArray(new String[0]) : null);
         if (req.getGameId() != null) {
             lobby.setGame(gameRepo.findById(req.getGameId()).orElse(null));
         }
 
-        return toResponse(lobbyRepo.save(lobby), memberRepo.countByLobbyId(lobbyId));
+        lobbyRepo.save(lobby);
+        saveTagsForLobby(lobby, req.getTags());
+
+        return toResponse(lobby, memberRepo.countByLobbyId(lobbyId));
     }
 
     /** Eliminar lobby (sólo owner) */
@@ -172,6 +175,31 @@ public class LobbyService {
     }
 
     // ── Helpers ────────────────────────────────
+
+    /** Busca lobbies por tag (para búsqueda desde el frontend) */
+    @Transactional(readOnly = true)
+    public List<LobbyResponse> findByTag(String tag) {
+        List<Long> lobbyIds = lobbyTagRepo.findLobbyIdsByTag(tag);
+        return lobbyIds.stream()
+                .map(id -> lobbyRepo.findById(id).orElse(null))
+                .filter(l -> l != null && Boolean.TRUE.equals(l.getIsActive()))
+                .map(l -> toResponse(l, memberRepo.countByLobbyId(l.getId())))
+                .toList();
+    }
+
+    /** Reemplaza todos los tags de un lobby */
+    private void saveTagsForLobby(Lobby lobby, List<String> tags) {
+        lobbyTagRepo.deleteByLobbyId(lobby.getId());
+        if (tags != null && !tags.isEmpty()) {
+            List<LobbyTag> lobbyTags = tags.stream()
+                    .filter(t -> t != null && !t.isBlank())
+                    .distinct()
+                    .map(t -> LobbyTag.builder().lobby(lobby).tag(t.trim()).build())
+                    .collect(Collectors.toList());
+            lobbyTagRepo.saveAll(lobbyTags);
+        }
+    }
+
     private Lobby getOrThrow(Long id) {
         return lobbyRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Lobby no encontrado"));
@@ -185,12 +213,15 @@ public class LobbyService {
     }
 
     private LobbyResponse toResponse(Lobby l, long count) {
+        // Lee tags desde la tabla lobby_tags (normalizada)
+        List<String> tags = lobbyTagRepo.findByLobbyId(l.getId())
+                .stream().map(LobbyTag::getTag).toList();
         return LobbyResponse.builder()
                 .id(l.getId()).name(l.getName()).description(l.getDescription())
                 .imageUrl(l.getImageUrl()).lobbyType(l.getLobbyType())
                 .privacy(l.getPrivacy()).maxMembers(l.getMaxMembers())
                 .memberCount(count)
-                .tags(l.getTags() != null ? Arrays.asList(l.getTags()) : null)
+                .tags(tags.isEmpty() ? null : tags)
                 .gameName(l.getGame() != null ? l.getGame().getName() : null)
                 .ownerUsername(l.getOwner().getUsername())
                 .createdAt(l.getCreatedAt())

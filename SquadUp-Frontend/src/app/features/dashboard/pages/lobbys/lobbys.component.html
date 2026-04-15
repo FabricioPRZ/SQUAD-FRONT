@@ -15,18 +15,44 @@
       Mis Lobbys
     </div>
 
-    <!-- Barra de filtros + botón crear -->
+    <!-- Barra de filtros + búsqueda de tag + botón crear -->
     <div class="controls-bar">
       <div class="filters">
-        <button class="filter-btn" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">
+        <button class="filter-btn" [class.active]="activeFilter() === 'all' && tagResults() === null" (click)="setFilter('all')">
           Todas
         </button>
-        <button class="filter-btn" [class.active]="activeFilter() === 'owned'" (click)="setFilter('owned')">
+        <button class="filter-btn" [class.active]="activeFilter() === 'owned' && tagResults() === null" (click)="setFilter('owned')">
           Mis Lobbys
         </button>
-        <button class="filter-btn joined" [class.active]="activeFilter() === 'joined'" (click)="setFilter('joined')">
+        <button class="filter-btn joined" [class.active]="activeFilter() === 'joined' && tagResults() === null" (click)="setFilter('joined')">
           Unido
         </button>
+      </div>
+
+      <!-- Buscador por tag -->
+      <div class="tag-search-wrapper" [class.has-value]="searchTag.length > 0">
+        <svg class="tag-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          id="tag-search-input"
+          class="tag-search-input"
+          type="text"
+          placeholder="Buscar por tag..."
+          [(ngModel)]="searchTag"
+          (ngModelChange)="onTagSearch()"
+          autocomplete="off"
+        />
+        @if (searchingTag()) {
+          <span class="tag-spinner"></span>
+        }
+        @if (searchTag.length > 0 && !searchingTag()) {
+          <button class="tag-clear-btn" (click)="clearTagSearch()" title="Limpiar búsqueda">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        }
       </div>
 
       <a class="create-btn" [routerLink]="['/dashboard/groups/create']">
@@ -36,6 +62,19 @@
         Crear Lobby
       </a>
     </div>
+
+    <!-- Badge de búsqueda activa por tag -->
+    @if (tagResults() !== null) {
+      <div class="tag-badge-bar">
+        <span class="tag-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+          </svg>
+          Tag: <strong>{{ searchTag }}</strong>
+        </span>
+        <span class="tag-count">{{ filteredLobbies().length }} resultado(s)</span>
+      </div>
+    }
 
     <!-- Grid de cards -->
     @if (loading()) {
@@ -60,11 +99,15 @@
           <circle cx="9" cy="7" r="4"/>
           <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
         </svg>
-        <p>No hay lobbys en esta categoría</p>
-        <a [routerLink]="['/dashboard/groups/create']" class="create-btn">Crear mi primer Lobby</a>
+        @if (tagResults() !== null) {
+          <p>No se encontraron lobbies con el tag <strong>"{{ searchTag }}"</strong></p>
+          <button class="create-btn" (click)="clearTagSearch()">Ver todos mis lobbies</button>
+        } @else {
+          <p>No hay lobbys en esta categoría</p>
+          <a [routerLink]="['/dashboard/groups/create']" class="create-btn">Crear mi primer Lobby</a>
+        }
       </div>
     }
 
   </main>
 </div>
-

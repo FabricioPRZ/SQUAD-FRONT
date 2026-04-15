@@ -1,5 +1,9 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Post } from '../components/card/card.component';
+
+const API = 'http://localhost:8080/api/posts';
 
 /** Extiende Post con indicador de propiedad — usado en la vista Guardados */
 export interface SavedPost extends Post {
@@ -8,46 +12,39 @@ export interface SavedPost extends Post {
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {
+
+  constructor(private http: HttpClient) {}
+
   /**
-   * Lista reactiva de posts.
-   * TODO: Reemplazar con llamadas al backend cuando el endpoint de posts esté listo.
-   * Los campos ya usan los nombres del PostResponse del backend.
+   * GET /api/posts/saved
+   * Publicaciones guardadas por el usuario actual.
    */
-  private posts = signal<SavedPost[]>([
-    {
-      id: 1, isOwn: true, savedByCurrentUser: true, saved: true,
-      imageUrl: '',
-      authorAvatarUrl: '',
-      authorUsername: 'Fernando',
-      groupName: 'Doomeros',
-      groupImage: 'https://upload.wikimedia.org/wikipedia/en/5/57/Doom_cover_art.jpg',
-      createdAt: new Date(Date.now() - 2 * 3600000).toISOString()
-    },
-    {
-      id: 2, isOwn: true, savedByCurrentUser: true, saved: true,
-      imageUrl: '',
-      authorAvatarUrl: '',
-      authorUsername: 'Fernando',
-      groupName: 'FF7 Fans',
-      groupImage: 'https://upload.wikimedia.org/wikipedia/en/c/c2/Final_Fantasy_VII_Box_Art.jpg',
-      createdAt: new Date(Date.now() - 86400000).toISOString()
-    },
-    {
-      id: 3, isOwn: false, savedByCurrentUser: true, saved: true,
-      imageUrl: '',
-      authorAvatarUrl: '',
-      authorUsername: 'AlphaWolf_99',
-      groupName: 'Doomeros',
-      groupImage: 'https://upload.wikimedia.org/wikipedia/en/5/57/Doom_cover_art.jpg',
-      createdAt: new Date(Date.now() - 3 * 86400000).toISOString()
-    },
-  ]);
+  getSaved(): Observable<Post[]> {
+    return this.http.get<Post[]>(`${API}/saved`);
+  }
 
-  getAll()   { return this.posts; }
-  getSaved() { return this.posts().filter(p => !p.isOwn && p.savedByCurrentUser); }
-  getOwn()   { return this.posts().filter(p => p.isOwn); }
+  /**
+   * GET /api/posts/mine
+   * Publicaciones propias del usuario actual.
+   */
+  getMine(): Observable<Post[]> {
+    return this.http.get<Post[]>(`${API}/mine`);
+  }
 
-  deletePost(id: number) {
-    this.posts.update(list => list.filter(p => p.id !== id));
+  /**
+   * POST /api/posts/{id}/save
+   * Guardar o quitar de guardados (toggle).
+   * Devuelve { saved: boolean }.
+   */
+  toggleSave(postId: number): Observable<{ saved: boolean }> {
+    return this.http.post<{ saved: boolean }>(`${API}/${postId}/save`, {});
+  }
+
+  /**
+   * DELETE /api/posts/{id}
+   * Eliminar publicación propia (soft-delete en backend).
+   */
+  deletePost(postId: number): Observable<void> {
+    return this.http.delete<void>(`${API}/${postId}`);
   }
 }

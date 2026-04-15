@@ -94,6 +94,11 @@ export class LobbyService {
     });
   }
 
+  /** GET /api/lobbies/by-tag?tag= — Buscar lobbies por tag */
+  getByTag(tag: string): Observable<LobbyResponse[]> {
+    return this.http.get<LobbyResponse[]>(`${API}/by-tag`, { params: { tag } });
+  }
+
   // ──────────────────────── Helpers ────────────────────────
 
   /** Enriquece la lista calculando isOwner según el usuario en sesión */

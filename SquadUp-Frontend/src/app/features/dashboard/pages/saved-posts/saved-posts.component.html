@@ -31,13 +31,18 @@
     </div>
 
     <!-- Grid de publicaciones -->
-    @if (filteredPosts().length > 0) {
+    @if (loading()) {
+      <div class="empty-state"><p>Cargando publicaciones...</p></div>
+    } @else if (filteredPosts().length > 0) {
       <div class="posts-grid">
         @for (post of filteredPosts(); track post.id) {
           <div class="post-wrapper">
             <app-card [post]="post"></app-card>
-            <!-- Botón eliminar sobre la card -->
-            <button class="delete-post-btn" (click)="deletePost(post)" [title]="post.isOwn ? 'Eliminar publicación' : 'Quitar de guardados'">
+            <!-- Botón eliminar/quitar sobre la card -->
+            <button
+              class="delete-post-btn"
+              (click)="deletePost(post, activeFilter() === 'own')"
+              [title]="activeFilter() === 'own' ? 'Eliminar publicación' : 'Quitar de guardados'">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
                 <path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>

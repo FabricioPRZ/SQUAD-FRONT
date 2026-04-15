@@ -42,6 +42,6 @@ public class UserGame {
     private Boolean isMain = false;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime createdAt;
 }

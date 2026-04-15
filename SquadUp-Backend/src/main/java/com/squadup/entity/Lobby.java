@@ -2,8 +2,6 @@ package com.squadup.entity;
 
 import com.squadup.entity.enums.LobbyPrivacy;
 import com.squadup.entity.enums.LobbyType;
-import io.hypersistence.utils.hibernate.type.array.StringArrayType;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,21 +22,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Entidad Lobby — tabla `lobbies`.
  * Vistas: Crear Lobby, Mis Lobbys, Editar Lobby, Panel de Perfil.
- *
- * Tipos nativos PostgreSQL (Hibernate 6 / hypersistence-utils):
- * @Type(StringArrayType.class) → TEXT[]
- * @Type(JsonBinaryType.class) → JSONB
  */
 @Entity
 @Table(name = "lobbies")
@@ -85,27 +77,22 @@ public class Lobby {
     private Short maxMembers = 10;
 
     /**
-     * Array de texto nativo PostgreSQL — via hypersistence-utils (Hibernate 6 API)
+     * Metadatos extra en formato JSON — compatible con MySQL 5.7+.
+     * En PostgreSQL se usaba JSONB; aquí usamos el tipo JSON nativo de MySQL.
      */
-    @Type(StringArrayType.class)
-    @Column(name = "tags", columnDefinition = "TEXT[]")
-    private String[] tags;
-
-    /** JSONB nativo PostgreSQL — via hypersistence-utils (Hibernate 6 API) */
-    @Type(JsonBinaryType.class)
-    @Column(name = "extra_meta", columnDefinition = "jsonb")
-    private Map<String, Object> extraMeta;
+    @Column(name = "extra_meta", columnDefinition = "JSON")
+    private String extraMeta;
 
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private Boolean isActive = true;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime updatedAt;
 
     // ── Relaciones ────────────────────────────
@@ -124,4 +111,9 @@ public class Lobby {
     @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Message> messages = new ArrayList<>();
+
+    /** Tags normalizados — tabla lobby_tags (reemplaza el array JSON) */
+    @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<LobbyTag> lobbyTags = new ArrayList<>();
 }

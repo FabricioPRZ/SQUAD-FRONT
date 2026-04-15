@@ -51,14 +51,14 @@ public class User {
     private UserStatus status = UserStatus.ACTIVE;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime updatedAt;
 
-    @Column(name = "last_login", columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "last_login", columnDefinition = "DATETIME(6)")
     private OffsetDateTime lastLogin;
 
     // ── Relaciones ──────────────────────────────────────────

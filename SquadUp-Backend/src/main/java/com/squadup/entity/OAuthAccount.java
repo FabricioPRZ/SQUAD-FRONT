@@ -38,10 +38,10 @@ public class OAuthAccount {
     @Column(name = "refresh_token", columnDefinition = "TEXT")
     private String refreshToken;
 
-    @Column(name = "token_expires_at", columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "token_expires_at", columnDefinition = "DATETIME(6)")
     private OffsetDateTime tokenExpiresAt;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime createdAt;
 }

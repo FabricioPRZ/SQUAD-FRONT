@@ -35,6 +35,6 @@ public class LobbyMember {
     private MemberRole role = MemberRole.MEMBER;
 
     @CreationTimestamp
-    @Column(name = "joined_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "joined_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime joinedAt;
 }

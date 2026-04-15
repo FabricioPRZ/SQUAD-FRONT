@@ -23,23 +23,24 @@ CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
 
 
-CREATE TYPE user_status_t       AS ENUM ('active', 'banned', 'inactive');
-CREATE TYPE oauth_provider_t    AS ENUM ('google', 'discord');
-CREATE TYPE game_genre_t        AS ENUM ('fps','moba','rpg','battle_royale',
-                                          'strategy','sports','survival','sandbox','other');
-CREATE TYPE player_rank_t       AS ENUM ('unranked','bronze','silver','gold',
-                                          'platinum','diamond','master','challenger');
-CREATE TYPE lobby_type_t        AS ENUM ('competitive','casual','ranked');
-CREATE TYPE lobby_privacy_t     AS ENUM ('public','private');
-CREATE TYPE member_role_t       AS ENUM ('owner','admin','member');
-CREATE TYPE join_req_status_t   AS ENUM ('pending','accepted','rejected');
-CREATE TYPE media_type_t        AS ENUM ('image','gif','video','link');
-CREATE TYPE message_type_t      AS ENUM ('text','image','gif','system');
-CREATE TYPE message_status_t    AS ENUM ('sent','delivered','read','deleted');
+-- Nota: valores en MAYÚSCULAS para coincidir con los enums de Java (Spring @Enumerated STRING)
+CREATE TYPE user_status_t       AS ENUM ('ACTIVE', 'BANNED', 'INACTIVE');
+CREATE TYPE oauth_provider_t    AS ENUM ('GOOGLE', 'DISCORD');
+CREATE TYPE game_genre_t        AS ENUM ('FPS','MOBA','RPG','BATTLE_ROYALE',
+                                          'STRATEGY','SPORTS','SURVIVAL','SANDBOX','OTHER');
+CREATE TYPE player_rank_t       AS ENUM ('UNRANKED','BRONZE','SILVER','GOLD',
+                                          'PLATINUM','DIAMOND','MASTER','CHALLENGER');
+CREATE TYPE lobby_type_t        AS ENUM ('COMPETITIVE','CASUAL','RANKED');
+CREATE TYPE lobby_privacy_t     AS ENUM ('PUBLIC','PRIVATE');
+CREATE TYPE member_role_t       AS ENUM ('OWNER','ADMIN','MEMBER');
+CREATE TYPE join_req_status_t   AS ENUM ('PENDING','ACCEPTED','REJECTED');
+CREATE TYPE media_type_t        AS ENUM ('IMAGE','GIF','VIDEO','LINK');
+CREATE TYPE message_type_t      AS ENUM ('TEXT','IMAGE','GIF','SYSTEM');
+CREATE TYPE message_status_t    AS ENUM ('SENT','DELIVERED','READ','DELETED');
 CREATE TYPE notification_type_t AS ENUM (
-    'join_request','request_accepted','request_rejected',
-    'user_left','user_joined','new_message','image_sent',
-    'mention','post_approved','lobby_deleted','system'
+    'JOIN_REQUEST','REQUEST_ACCEPTED','REQUEST_REJECTED',
+    'USER_LEFT','USER_JOINED','NEW_MESSAGE','IMAGE_SENT',
+    'MENTION','POST_APPROVED','LOBBY_DELETED','SYSTEM'
 );
 
 
@@ -50,7 +51,7 @@ CREATE TABLE users (
     email         VARCHAR(255)    NOT NULL,
     password_hash VARCHAR(255)    NULL,        
     avatar_url    TEXT            NULL,
-    status        user_status_t   NOT NULL DEFAULT 'active',
+    status        user_status_t   NOT NULL DEFAULT 'ACTIVE',
     created_at    TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
     updated_at    TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
     last_login    TIMESTAMPTZ     NULL,
@@ -92,7 +93,7 @@ CREATE INDEX ix_oauth_user_id ON oauth_accounts (user_id);
 CREATE TABLE games (
     id          BIGSERIAL      PRIMARY KEY,
     name        VARCHAR(120)   NOT NULL,
-    genre       game_genre_t   NOT NULL DEFAULT 'other',
+    genre       game_genre_t   NOT NULL DEFAULT 'OTHER',
     cover_url   TEXT           NULL,
     description TEXT           NULL,
     created_at  TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
@@ -111,7 +112,7 @@ CREATE TABLE user_games (
     id           BIGSERIAL      PRIMARY KEY,
     user_id      BIGINT         NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     game_id      BIGINT         NOT NULL REFERENCES games (id) ON DELETE CASCADE,
-    rank         player_rank_t  NOT NULL DEFAULT 'unranked',
+    rank         player_rank_t  NOT NULL DEFAULT 'UNRANKED',
     rank_label   VARCHAR(50)    NULL,     -- Rango exacto del juego: "Diamante I"
     hours_played INT            NULL CHECK (hours_played >= 0),
     is_main      BOOLEAN        NOT NULL DEFAULT FALSE,
@@ -134,8 +135,8 @@ CREATE TABLE lobbies (
     name        VARCHAR(100)    NOT NULL,
     description TEXT            NULL,
     image_url   TEXT            NULL,
-    lobby_type  lobby_type_t    NOT NULL DEFAULT 'casual',
-    privacy     lobby_privacy_t NOT NULL DEFAULT 'public',
+    lobby_type  lobby_type_t    NOT NULL DEFAULT 'CASUAL',
+    privacy     lobby_privacy_t NOT NULL DEFAULT 'PUBLIC',
     max_members SMALLINT        NOT NULL DEFAULT 10,
     tags        TEXT[]          NULL,     -- Array de etiquetas (PostgreSQL nativo)
     extra_meta  JSONB           NULL,     -- Metadatos extendidos: modo de juego, rango mínimo…
@@ -162,11 +163,34 @@ CREATE INDEX ix_lobbies_meta_gin ON lobbies USING gin (extra_meta);
 CREATE INDEX ix_lobbies_name_trgm ON lobbies USING gin (name gin_trgm_ops);
 
 
+-- ────────────────────────────────────────────
+--  LOBBY TAGS (normalizada — reemplaza TEXT[])
+-- ────────────────────────────────────────────
+-- Cada tag de un lobby se almacena como una fila independiente.
+-- Esto cumple 1FN y permite JOIN directos e índices eficientes.
+CREATE TABLE lobby_tags (
+    id        BIGSERIAL    PRIMARY KEY,
+    lobby_id  BIGINT       NOT NULL REFERENCES lobbies (id) ON DELETE CASCADE,
+    tag       VARCHAR(50)  NOT NULL,
+
+    CONSTRAINT uq_lobby_tag UNIQUE (lobby_id, tag)
+);
+
+COMMENT ON TABLE  lobby_tags          IS 'Tags normalizados de cada lobby (1FN). Reemplaza la columna TEXT[] de lobbies.';
+COMMENT ON COLUMN lobby_tags.tag      IS 'Etiqueta del lobby (ej: Competitivo, Casual, Roleplay)';
+
+CREATE INDEX ix_lobby_tags_lobby ON lobby_tags (lobby_id);
+-- Índice sobre tag para búsquedas por etiqueta (GET /api/lobbies/by-tag)
+CREATE INDEX ix_lobby_tags_tag   ON lobby_tags (tag);
+-- Búsqueda difusa por tag
+CREATE INDEX ix_lobby_tags_tag_trgm ON lobby_tags USING gin (tag gin_trgm_ops);
+
+
 CREATE TABLE lobby_members (
     id        BIGSERIAL     PRIMARY KEY,
     lobby_id  BIGINT        NOT NULL REFERENCES lobbies (id) ON DELETE CASCADE,
     user_id   BIGINT        NOT NULL REFERENCES users   (id) ON DELETE CASCADE,
-    role      member_role_t NOT NULL DEFAULT 'member',
+    role      member_role_t NOT NULL DEFAULT 'MEMBER',
     joined_at TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
 
     CONSTRAINT uq_lobby_members UNIQUE (lobby_id, user_id)
@@ -183,7 +207,7 @@ CREATE TABLE lobby_join_requests (
     lobby_id     BIGINT              NOT NULL REFERENCES lobbies (id) ON DELETE CASCADE,
     requester_id BIGINT              NOT NULL REFERENCES users   (id) ON DELETE CASCADE,
     reviewed_by  BIGINT              NULL     REFERENCES users   (id) ON DELETE SET NULL,
-    status       join_req_status_t   NOT NULL DEFAULT 'pending',
+    status       join_req_status_t   NOT NULL DEFAULT 'PENDING',
     message      TEXT                NULL,
     created_at   TIMESTAMPTZ         NOT NULL DEFAULT NOW(),
     reviewed_at  TIMESTAMPTZ         NULL
@@ -227,7 +251,7 @@ CREATE INDEX ix_posts_active
 CREATE TABLE post_media (
     id         BIGSERIAL    PRIMARY KEY,
     post_id    BIGINT       NOT NULL REFERENCES posts (id) ON DELETE CASCADE,
-    media_type media_type_t NOT NULL DEFAULT 'image',
+    media_type media_type_t NOT NULL DEFAULT 'IMAGE',
     url        TEXT         NOT NULL,
     filename   VARCHAR(255) NULL,
     file_size  BIGINT       NULL CHECK (file_size > 0),  -- Bytes
@@ -263,8 +287,8 @@ CREATE TABLE messages (
     recipient_id BIGINT           NULL REFERENCES users    (id) ON DELETE SET NULL,
     reply_to_id  BIGINT           NULL REFERENCES messages (id) ON DELETE SET NULL,
     content      TEXT             NULL,
-    msg_type     message_type_t   NOT NULL DEFAULT 'text',
-    status       message_status_t NOT NULL DEFAULT 'sent',
+    msg_type     message_type_t   NOT NULL DEFAULT 'TEXT',
+    status       message_status_t NOT NULL DEFAULT 'SENT',
     attachment   JSONB            NULL,   -- {url, filename, size, width, height}
     sent_at      TIMESTAMPTZ      NOT NULL DEFAULT NOW(),
     edited_at    TIMESTAMPTZ      NULL,

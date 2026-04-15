@@ -62,7 +62,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        // Permite origen exacto en desarrollo Y cualquier subdominio de Vercel en producción.
+        // Si tienes un dominio personalizado en Vercel, agrégalo aquí también.
+        config.setAllowedOriginPatterns(List.of(
+            "http://localhost:4200",          // Desarrollo local
+            "https://*.vercel.app",           // Cualquier deploy de Vercel (previews + producción)
+            "https://squadup.vercel.app"      // Dominio de producción principal (ajusta si es diferente)
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization"));

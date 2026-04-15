@@ -1,6 +1,8 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, of, takeUntil } from 'rxjs';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { LobbyCardComponent, Lobby } from '../../../../shared/components/lobby-card/lobby-card.component';
 import { LobbyService, LobbyResponse } from '../../../../shared/services/lobby.service';
@@ -12,27 +14,35 @@ type FilterType = 'all' | 'owned' | 'joined';
 @Component({
   selector: 'app-lobbys',
   standalone: true,
-  imports: [CommonModule, RouterLink, HeaderComponent, LobbyCardComponent],
+  imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, LobbyCardComponent],
   templateUrl: './lobbys.component.html',
   styleUrls: ['./lobbys.component.css']
 })
-export class LobbysComponent implements OnInit {
+export class LobbysComponent implements OnInit, OnDestroy {
 
   activeFilter = signal<FilterType>('all');
   loading = signal(true);
+  searchTag = '';
+  tagResults = signal<LobbyResponse[] | null>(null); // null = sin búsqueda activa
+  searchingTag = signal(false);
 
   private owned  = signal<LobbyResponse[]>([]);
   private joined = signal<LobbyResponse[]>([]);
+  private destroy$ = new Subject<void>();
+  private tagSearch$ = new Subject<string>();
 
   allLobbies = computed<LobbyResponse[]>(() => {
     const o = this.owned();
     const j = this.joined();
-    // Evitar duplicados si un lobby propio también está en joined
     const joinedFiltered = j.filter(j => !o.some(o => o.id === j.id));
     return [...o, ...joinedFiltered];
   });
 
   filteredLobbies = computed<LobbyResponse[]>(() => {
+    // Si hay resultados de búsqueda por tag, mostrarlos
+    const tagRes = this.tagResults();
+    if (tagRes !== null) return tagRes;
+
     const f = this.activeFilter();
     if (f === 'owned')  return this.owned();
     if (f === 'joined') return this.joined();
@@ -48,11 +58,55 @@ export class LobbysComponent implements OnInit {
 
   ngOnInit() {
     this.loadLobbies();
+
+    // Búsqueda por tag con debounce de 400ms
+    this.tagSearch$.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      switchMap(tag => {
+        if (!tag.trim()) {
+          this.tagResults.set(null);
+          this.searchingTag.set(false);
+          return of(null);
+        }
+        this.searchingTag.set(true);
+        return this.lobbyService.getByTag(tag.trim());
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (results) => {
+        if (results !== null) {
+          this.tagResults.set(this.lobbyService.withOwnerFlag(results));
+        }
+        this.searchingTag.set(false);
+      },
+      error: () => {
+        this.searchingTag.set(false);
+        this.toast.error('Error', 'No se pudo buscar por tag.');
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onTagSearch() {
+    this.tagSearch$.next(this.searchTag);
+    if (!this.searchTag.trim()) {
+      this.tagResults.set(null);
+    }
+  }
+
+  clearTagSearch() {
+    this.searchTag = '';
+    this.tagResults.set(null);
+    this.tagSearch$.next('');
   }
 
   private loadLobbies() {
     this.loading.set(true);
-
     this.lobbyService.getMyLobbies().subscribe({
       next: (data) => {
         this.owned.set(this.lobbyService.withOwnerFlag(data));
@@ -94,7 +148,11 @@ export class LobbysComponent implements OnInit {
     };
   }
 
-  setFilter(filter: FilterType) { this.activeFilter.set(filter); }
+  setFilter(filter: FilterType) {
+    this.activeFilter.set(filter);
+    // Al cambiar filtro, limpiar búsqueda por tag
+    this.clearTagSearch();
+  }
 
   onEdit(lobby: LobbyResponse) {
     this.router.navigate(['/dashboard/groups', lobby.id, 'edit']);

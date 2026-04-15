@@ -87,13 +87,6 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- ── Tipos nativos PostgreSQL: JSONB, TEXT[] ── -->
-        <dependency>
-            <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-63</artifactId>
-            <version>3.7.3</version>
-        </dependency>
-
         <!-- ── Utilidades ── -->
         <dependency>
             <groupId>org.projectlombok</groupId>

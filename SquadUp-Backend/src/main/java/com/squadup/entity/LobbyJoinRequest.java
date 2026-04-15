@@ -45,9 +45,9 @@ public class LobbyJoinRequest {
     private String message;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime createdAt;
 
-    @Column(name = "reviewed_at", columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "reviewed_at", columnDefinition = "DATETIME(6)")
     private OffsetDateTime reviewedAt;
 }

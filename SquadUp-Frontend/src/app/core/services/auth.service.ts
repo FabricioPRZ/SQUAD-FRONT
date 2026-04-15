@@ -5,26 +5,20 @@ import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.model';
 import { User } from '../models/user.model';
+import { environment } from '../../../../environments/environment';
 
-const API = 'http://localhost:8080/api/auth';
+const API = environment.apiUrl;
 const TOKEN_KEY = 'squadup_token';
 const USER_KEY  = 'squadup_user';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  /** Usuario actualmente autenticado */
   private _currentUser = signal<User | null>(this.loadUser());
-
-  /** Observable del usuario actual (readonly) */
   readonly currentUser = this._currentUser.asReadonly();
-
-  /** true si hay sesión activa */
   readonly isLoggedIn = computed(() => this._currentUser() !== null);
 
   constructor(private http: HttpClient, private router: Router) {}
-
-  // ──────────────────────── Auth ────────────────────────
 
   login(req: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${API}/login`, req).pipe(
@@ -45,13 +39,9 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  // ──────────────────────── Token ────────────────────────
-
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
   }
-
-  // ──────────────────────── Private ────────────────────────
 
   private saveSession(res: AuthResponse): void {
     localStorage.setItem(TOKEN_KEY, res.token);

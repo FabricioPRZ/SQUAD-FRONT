@@ -16,13 +16,13 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
 
   // Rutas protegidas — requieren sesión activa
-  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
-  { path: 'dashboard/groups/create', component: CreateLobbyComponent, canActivate: [authGuard] },
-  { path: 'dashboard/groups/:id/edit', component: CreateLobbyComponent, canActivate: [authGuard] },
-  { path: 'home', component: HomeComponent, canActivate: [authGuard] },
-  { path: 'lobbys', component: LobbysComponent, canActivate: [authGuard] },
-  { path: 'edit-profile', component: EditProfileComponent, canActivate: [authGuard] },
-  { path: 'saved-posts', component: SavedPostsComponent, canActivate: [authGuard] },
+  { path: 'dashboard', component: DashboardComponent, /*canActivate: [authGuard]*/ },
+  { path: 'dashboard/groups/create', component: CreateLobbyComponent, /*canActivate: [authGuard]*/ },
+  { path: 'dashboard/groups/:id/edit', component: CreateLobbyComponent, /*canActivate: [authGuard]*/ },
+  { path: 'home', component: HomeComponent, /*canActivate: [authGuard]*/ },
+  { path: 'lobbys', component: LobbysComponent, /*canActivate: [authGuard]*/ },
+  { path: 'edit-profile', component: EditProfileComponent, /*canActivate: [authGuard]*/ },
+  { path: 'saved-posts', component: SavedPostsComponent, /*canActivate: [authGuard]*/ },
 
   { path: '**', redirectTo: '' }
 ];

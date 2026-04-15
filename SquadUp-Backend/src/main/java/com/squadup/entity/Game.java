@@ -34,7 +34,7 @@ public class Game {
     private String description;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private OffsetDateTime createdAt;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
