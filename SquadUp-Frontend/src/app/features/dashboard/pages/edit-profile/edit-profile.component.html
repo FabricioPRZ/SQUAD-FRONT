@@ -11,8 +11,8 @@
       <!-- ── Avatar ── -->
       <div class="avatar-section">
         <div class="avatar-container">
-          @if (profileData.avatar) {
-            <img class="avatar-img" [src]="profileData.avatar" alt="Avatar">
+          @if (vm.avatarUrl()) {
+            <img class="avatar-img" [src]="vm.avatarUrl()" alt="Avatar">
           } @else {
             <div class="avatar-placeholder">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -32,8 +32,8 @@
 
         <div class="avatar-actions">
           <span class="avatar-hint">Haz clic en el avatar para cambiarlo</span>
-          @if (profileData.avatar) {
-            <button class="remove-avatar-btn" (click)="removeAvatar()">Quitar foto</button>
+          @if (vm.avatarUrl()) {
+            <button class="remove-avatar-btn" (click)="vm.removeAvatar()">Quitar foto</button>
           }
         </div>
       </div>
@@ -46,22 +46,22 @@
       <div class="fields-grid">
         <div class="field-block">
           <span class="field-label">NOMBRE COMPLETO</span>
-          <input type="text" class="profile-input" [(ngModel)]="profileData.name" placeholder="Tu nombre completo">
+          <input type="text" class="profile-input" [ngModel]="vm.name()" (ngModelChange)="vm.setName($event)" placeholder="Tu nombre completo" [disabled]="vm.loading() || vm.updating()">
         </div>
         <div class="field-block">
           <span class="field-label">NOMBRE DE USUARIO</span>
           <div class="input-prefix-wrap">
             <span class="input-prefix">&#64;</span>
-            <input type="text" class="profile-input with-prefix" [(ngModel)]="profileData.username" placeholder="username">
+            <input type="text" class="profile-input with-prefix" [ngModel]="vm.username()" placeholder="username" disabled>
           </div>
         </div>
         <div class="field-block full-width">
           <span class="field-label">CORREO ELECTRÓNICO</span>
-          <input type="email" class="profile-input" [(ngModel)]="profileData.email" placeholder="tu@email.com">
+          <input type="email" class="profile-input" [ngModel]="vm.email()" placeholder="correo no disponible" disabled>
         </div>
         <div class="field-block full-width">
           <span class="field-label">BIO</span>
-          <textarea class="profile-textarea" [(ngModel)]="profileData.bio" placeholder="Cuéntanos algo sobre ti..."></textarea>
+          <textarea class="profile-textarea" [ngModel]="vm.bio()" (ngModelChange)="vm.setBio($event)" placeholder="Cuéntanos algo sobre ti..." [disabled]="vm.loading() || vm.updating()"></textarea>
         </div>
       </div>
 
@@ -80,70 +80,8 @@
 
       @if (showPassSection) {
         <div class="fields-grid pass-section">
-          <!-- Contraseña Actual -->
-          <div class="field-block full-width">
-            <span class="field-label">CONTRASEÑA ACTUAL</span>
-            <div class="input-prefix-wrap">
-              <input [type]="showCurrentPass ? 'text' : 'password'" class="profile-input" [(ngModel)]="profileData.currentPassword" placeholder="••••••••">
-              <button type="button" class="password-toggle" (click)="toggleCurrentPassword()" [title]="showCurrentPass ? 'Ocultar' : 'Mostrar'">
-                @if (showCurrentPass) {
-                  <!-- Ojo tachado -->
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                  </svg>
-                } @else {
-                  <!-- Ojo abierto -->
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                }
-              </button>
-            </div>
-          </div>
-          
-          <!-- Nueva Contraseña -->
-          <div class="field-block">
-            <span class="field-label">NUEVA CONTRASEÑA</span>
-            <div class="input-prefix-wrap">
-              <input [type]="showNewPass ? 'text' : 'password'" class="profile-input" [(ngModel)]="profileData.newPassword" placeholder="••••••••">
-              <button type="button" class="password-toggle" (click)="toggleNewPassword()" [title]="showNewPass ? 'Ocultar' : 'Mostrar'">
-                @if (showNewPass) {
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                  </svg>
-                } @else {
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                }
-              </button>
-            </div>
-          </div>
-          
-          <!-- Confirmar Contraseña -->
-          <div class="field-block">
-            <span class="field-label">CONFIRMAR CONTRASEÑA</span>
-            <div class="input-prefix-wrap">
-              <input [type]="showConfirmPass ? 'text' : 'password'" class="profile-input" [(ngModel)]="profileData.confirmPassword" placeholder="••••••••">
-              <button type="button" class="password-toggle" (click)="toggleConfirmPassword()" [title]="showConfirmPass ? 'Ocultar' : 'Mostrar'">
-                @if (showConfirmPass) {
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                  </svg>
-                } @else {
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                }
-              </button>
-            </div>
-          </div>
+          <!-- TODO: Cambio de contraseña no implementado en el backend -->
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: -10px;">El cambio de contraseña no está disponible actualmente.</p>
         </div>
       }
 
@@ -151,8 +89,14 @@
 
       <!-- ── Acciones ── -->
       <div class="actions-row">
-        <button class="btn-cancel" (click)="cancel()">Cancelar</button>
-        <button class="btn-save" (click)="onSubmit()">Guardar Cambios</button>
+        <button class="btn-cancel" (click)="vm.cancel()" [disabled]="vm.loading() || vm.updating()">Cancelar</button>
+        <button class="btn-save" (click)="vm.saveChanges()" [disabled]="vm.loading() || vm.updating()">
+          @if (vm.updating()) {
+            Guardando...
+          } @else {
+            Guardar Cambios
+          }
+        </button>
       </div>
 
     </div>

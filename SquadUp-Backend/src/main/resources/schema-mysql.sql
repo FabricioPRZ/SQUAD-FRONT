@@ -3,8 +3,8 @@
 --  Equivalente al esquema PostgreSQL, adaptado a MySQL 8+
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS recu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE recu;
+CREATE DATABASE IF NOT EXISTS squadup_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE squadup_db;
 
 -- ────────────────────────────────────────────
 --  TABLAS

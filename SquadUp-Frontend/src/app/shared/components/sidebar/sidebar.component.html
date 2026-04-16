@@ -15,17 +15,23 @@
 
     <!-- Lista de Grupos -->
     <div class="groups-list">
-      @for (group of groups; track group.id) {
-        <div 
-          class="group-item" 
-          [class.active]="activeGroupId === group.id"
-          [title]="group.name"
-          (click)="selectGroup(group)">
-          <div class="group-icon-wrapper">
-            <img [src]="group.imageUrl" [alt]="group.name" class="group-icon">
-          </div>
-          <div class="active-indicator"></div>
+      @if (vm.loading()) {
+        <div class="group-item placeholder" title="Cargando...">
+          <div class="group-icon-wrapper skeleton"></div>
         </div>
+      } @else {
+        @for (group of vm.groups(); track group.id) {
+          <div 
+            class="group-item" 
+            [class.active]="activeGroupId === group.id"
+            [title]="group.name"
+            (click)="selectGroup(group)">
+            <div class="group-icon-wrapper">
+              <img [src]="group.imageUrl" [alt]="group.name" class="group-icon">
+            </div>
+            <div class="active-indicator"></div>
+          </div>
+        }
       }
     </div>
 

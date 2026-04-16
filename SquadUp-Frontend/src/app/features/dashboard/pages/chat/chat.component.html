@@ -18,7 +18,7 @@
 
   <!-- ── Lista de Mensajes ── -->
   <div class="messages-container" #messagesContainer>
-    @for (msg of messages; track msg.id) {
+    @for (msg of vm.messages(); track msg.id) {
 
       <!-- Mensaje de otro usuario -->
       @if (!msg.isOwn) {

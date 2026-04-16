@@ -7,14 +7,14 @@
 
   <div class="main-layout">
     <!-- Sidebar izquierdo: grupos -->
-    <app-sidebar (groupSelected)="onGroupSelected($event)"></app-sidebar>
+    <app-sidebar (groupSelected)="vm.selectGroup($event)"></app-sidebar>
 
     <!-- Panel de Chat (izquierdo, aparece al seleccionar grupo) -->
-    @if (isChatOpen && selectedGroup) {
+    @if (isChatOpen && vm.selectedGroup()) {
       <aside class="chat-panel-wrapper">
         <app-chat
-          [group]="selectedGroup"
-          (closeChat)="closeChat()">
+          [group]="vm.selectedGroup()!"
+          (closeChat)="vm.closeChat()">
         </app-chat>
       </aside>
     }
@@ -22,7 +22,7 @@
     <!-- Feed de publicaciones (columna central) -->
     <main class="content-area" [class.chat-open]="isChatOpen">
       <div class="feed-column">
-        @for (post of posts; track post.id) {
+        @for (post of vm.posts(); track post.id) {
           <app-card [post]="post"></app-card>
         }
       </div>

@@ -65,11 +65,11 @@
           (click)="toggleUserMenu()"
           aria-label="Menú de usuario">
           <div class="profile-info">
-            <span class="profile-name">{{ userName }}</span>
-            <span class="profile-role">Administrador</span>
+            <span class="profile-name">{{ session.username() || 'Usuario' }}</span>
+            <span class="profile-role">Jugador</span>
           </div>
           <div class="avatar-wrapper">
-            <img class="avatar" [src]="userAvatarUrl" [alt]="'Avatar de ' + userName" />
+            <img class="avatar" [src]="session.avatarUrl() || 'https://i.pravatar.cc/150?img=12'" [alt]="'Avatar de ' + session.username()" />
             <span class="avatar-status"></span>
           </div>
           <svg class="chevron-icon" [class.rotated]="showUserMenu"
@@ -93,9 +93,9 @@
   <!-- Modal de Menú de Usuario -->
   <app-user-menu-modal
     [isOpen]="showUserMenu"
-    [userName]="userName"
-    [userEmail]="userEmail"
-    [userAvatar]="userAvatarUrl"
+    [userName]="session.username() || 'Usuario'"
+    [userEmail]="session.email() || 'Sin correo'"
+    [userAvatar]="session.avatarUrl() || 'https://i.pravatar.cc/150?img=12'"
     (closed)="closeUserMenu()"
     (optionSelected)="onMenuOption($event)"
     (logoutRequested)="onLogout()">

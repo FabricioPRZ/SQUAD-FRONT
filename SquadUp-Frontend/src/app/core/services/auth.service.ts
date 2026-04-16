@@ -7,7 +7,7 @@ import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.mode
 import { User } from '../models/user.model';
 import { environment } from '../../../../environments/environment';
 
-const API = environment.apiUrl;
+const API = `${environment.apiUrl}/api/auth`;
 const TOKEN_KEY = 'squadup_token';
 const USER_KEY  = 'squadup_user';
 

@@ -28,7 +28,7 @@ public class UserGame {
     @JoinColumn(name = "game_id", nullable = false, foreignKey = @ForeignKey(name = "fk_ug_game"))
     private Game game;
 
-    @Column(name = "rank", length = 20)
+    @Column(name = "user_rank", length = 20)
     private String rank;
 
     @Column(name = "rank_label", length = 50)

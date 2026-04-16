@@ -1,5 +1,8 @@
 package com.squadup.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squadup.dto.NotificationResponse;
 import com.squadup.entity.*;
 import com.squadup.entity.enums.NotificationType;
@@ -23,6 +26,7 @@ public class NotificationService {
 
     private final NotificationRepository notifRepo;
     private final SimpMessagingTemplate messagingTemplate; // WebSocket
+    private final ObjectMapper objectMapper;
 
     /** Conteo de no leídas — Badge de la campana 🔔 */
     @Transactional(readOnly = true)
@@ -92,9 +96,16 @@ public class NotificationService {
     @Transactional
     protected void persist(User recipient, User actor,
             NotificationType type, Map<String, Object> payload) {
+        String payloadJson = "{}";
+        try {
+            payloadJson = objectMapper.writeValueAsString(payload);
+        } catch (JsonProcessingException e) {
+            // Log error
+        }
+
         Notification notif = Notification.builder()
                 .recipient(recipient).actor(actor)
-                .notifType(type).payload(payload)
+                .notifType(type).payload(payloadJson)
                 .build();
         notifRepo.save(notif);
 
@@ -106,11 +117,20 @@ public class NotificationService {
     }
 
     private NotificationResponse toDto(Notification n) {
+        Map<String, Object> payloadMap = null;
+        if (n.getPayload() != null) {
+            try {
+                payloadMap = objectMapper.readValue(n.getPayload(), new TypeReference<Map<String, Object>>() {});
+            } catch (JsonProcessingException e) {
+                // Ignore parsing errors and keep it null or empty map
+            }
+        }
+
         return NotificationResponse.builder()
                 .id(n.getId()).type(n.getNotifType())
                 .actorUsername(n.getActor() != null ? n.getActor().getUsername() : null)
                 .actorAvatar(n.getActor() != null ? n.getActor().getAvatarUrl() : null)
-                .payload(n.getPayload()).read(n.getIsRead())
+                .payload(payloadMap).read(n.getIsRead())
                 .createdAt(n.getCreatedAt())
                 .build();
     }

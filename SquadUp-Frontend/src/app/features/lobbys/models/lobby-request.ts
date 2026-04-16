@@ -1,4 +1,4 @@
-export type LobbyType    = 'CASUAL' | 'COMPETITIVE' | 'TRAINING';
+export type LobbyType    = 'CASUAL' | 'COMPETITIVE' | 'RANKED';
 export type LobbyPrivacy = 'PUBLIC' | 'PRIVATE';
 
 export interface LobbyRequest {
@@ -9,4 +9,5 @@ export interface LobbyRequest {
   privacy:     LobbyPrivacy;
   maxMembers:  number;
   tags?:       string[];
+  imageUrl?:   string;
 }

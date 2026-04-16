@@ -1,6 +1,7 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { SessionViewModelService } from '../../viewmodels/session-view-model.service';
 
 @Component({
   selector: 'app-user-sidebar',
@@ -9,12 +10,14 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './user-sidebar.component.html',
   styleUrls: ['./user-sidebar.component.css']
 })
-export class UserSidebarComponent {
+export class UserSidebarComponent implements OnInit {
   @Output() optionSelected = new EventEmitter<string>();
 
-  userName = 'Fernando';
-  userEmail = '233373@ids.upchiapas.edu.mx';
-  userAvatarUrl = 'https://i.pravatar.cc/150?img=12';
+  constructor(public session: SessionViewModelService) {}
+
+  ngOnInit() {
+    this.session.loadSession();
+  }
 
   selectOption(id: string) {
     this.optionSelected.emit(id);

@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NotificationsModalComponent } from '../notifications-modal/notifications-modal.component';
 import { UserMenuModalComponent } from '../user-menu-modal/user-menu-modal.component';
+import { SessionViewModelService } from '../../viewmodels/session-view-model.service';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +13,7 @@ import { UserMenuModalComponent } from '../user-menu-modal/user-menu-modal.compo
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   @Input() isMinimal: boolean = false;
   
   // Búsqueda
@@ -22,10 +23,11 @@ export class HeaderComponent {
   showNotifications: boolean = false;
   showUserMenu: boolean = false;
 
-  // Datos del usuario (en el futuro vendrán del servicio de auth)
-  userAvatarUrl: string = 'https://i.pravatar.cc/150?img=12';
-  userName: string = 'Fernando';
-  userEmail: string = '233373@ids.upchiapas.edu.mx';
+  constructor(public session: SessionViewModelService) {}
+
+  ngOnInit() {
+    this.session.loadSession();
+  }
 
   // Notificaciones (badge)
   get notificationCount(): number {
@@ -70,7 +72,7 @@ export class HeaderComponent {
 
   // Acción de logout
   onLogout(): void {
-    console.log('Cerrar sesión');
+    this.session.logout();
     this.showUserMenu = false;
   }
 

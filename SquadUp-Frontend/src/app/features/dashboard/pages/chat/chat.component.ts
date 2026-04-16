@@ -1,20 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ElementRef, ViewChild, OnDestroy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Group } from '../../../../shared/components/sidebar/sidebar.component';
-import { ChatService, ChatMessageDto } from '../../../../shared/services/chat.service';
-import { Subscription } from 'rxjs';
-
-export interface ChatMessage {
-  id: number;
-  senderId: string;
-  senderName: string;
-  senderAvatar: string;
-  text: string;
-  imageUrl?: string;
-  timestamp: string;
-  isOwn: boolean;
-}
+import { ChatViewModelService } from '../../viewmodels/chat-view-model.service';
 
 @Component({
   selector: 'app-chat',
@@ -23,7 +11,7 @@ export interface ChatMessage {
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements OnChanges, OnInit, OnDestroy {
+export class ChatComponent implements OnChanges, OnDestroy {
   @Input() group!: Group;
   @Output() closeChat = new EventEmitter<void>();
 
@@ -31,42 +19,27 @@ export class ChatComponent implements OnChanges, OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   newMessage = '';
-  messages: ChatMessage[] = [];
-  private chatSub?: Subscription;
 
-  constructor(private chatService: ChatService) {}
-
-  ngOnInit() {
-    this.chatSub = this.chatService.messages$.subscribe(dtos => {
-      this.messages = dtos.map(dto => ({
-        id: dto.id || Date.now(),
-        senderId: dto.senderId?.toString() || 'unknown',
-        senderName: dto.username,
-        senderAvatar: dto.avatar || '',
-        text: dto.type === 'text' || dto.type === 'TEXT' ? dto.content : '',
-        imageUrl: dto.type === 'image' || dto.type === 'IMAGE' ? dto.content : undefined,
-        timestamp: dto.sentAt ? new Date(dto.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'ahora',
-        isOwn: !!dto.isOwn
-      }));
+  constructor(public vm: ChatViewModelService) {
+    effect(() => {
+      this.vm.messages();
       setTimeout(() => this.scrollToBottom(), 100);
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['group'] && this.group) {
-      this.chatService.connectToLobby(Number(this.group.id));
-      setTimeout(() => this.scrollToBottom(), 100);
+      this.vm.init(Number(this.group.id));
     }
   }
 
   ngOnDestroy() {
-    this.chatSub?.unsubscribe();
-    this.chatService.disconnect();
+    this.vm.destroy();
   }
 
   sendMessage() {
     if (!this.newMessage.trim()) return;
-    this.chatService.sendMessage(Number(this.group.id), this.newMessage.trim(), 'text');
+    this.vm.sendMessage(Number(this.group.id), this.newMessage.trim(), 'text');
     this.newMessage = '';
   }
 
@@ -89,7 +62,7 @@ export class ChatComponent implements OnChanges, OnInit, OnDestroy {
     const reader = new FileReader();
     reader.onload = (e) => {
       const base64 = e.target?.result as string;
-      this.chatService.sendMessage(Number(this.group.id), base64, 'image');
+      this.vm.sendMessage(Number(this.group.id), base64, 'image');
     };
     reader.readAsDataURL(file);
     input.value = ''; // reset para poder subir el mismo archivo de nuevo
