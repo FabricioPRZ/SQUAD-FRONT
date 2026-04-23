@@ -8,10 +8,10 @@ type FilterType = 'all' | 'owned';
 @Injectable({ providedIn: 'root' })
 export class LobbysViewModelService {
 
-  private _allLobbies = signal<LobbyResponse[]>([]);
-  private _myLobbies  = signal<LobbyResponse[]>([]);
-  private _loading    = signal(false);
-  private _error      = signal<string | null>(null);
+  private _allLobbies   = signal<LobbyResponse[]>([]);
+  private _myLobbies    = signal<LobbyResponse[]>([]);
+  private _loading      = signal(false);
+  private _error        = signal<string | null>(null);
   private _activeFilter = signal<FilterType>('all');
 
   readonly allLobbies   = this._allLobbies.asReadonly();
@@ -38,8 +38,8 @@ export class LobbysViewModelService {
   loadAll(): void {
     this._loading.set(true);
     this.lobbyService.getAll().subscribe({
-      next: ({ lobbys }) => {
-        this._allLobbies.set(this.lobbyService.withOwnerFlag(lobbys));
+      next: (lobbies) => {
+        this._allLobbies.set(this.lobbyService.withOwnerFlag(lobbies ?? []));
         this._loading.set(false);
       },
       error: () => {
@@ -52,8 +52,8 @@ export class LobbysViewModelService {
 
   loadMyLobbies(): void {
     this.lobbyService.getMyLobbies().subscribe({
-      next: ({ lobbys }) => {
-        this._myLobbies.set(this.lobbyService.withOwnerFlag(lobbys));
+      next: (lobbies) => {
+        this._myLobbies.set(this.lobbyService.withOwnerFlag(lobbies ?? []));
       },
       error: () => {
         this.toast.error('Error', 'No se pudieron cargar tus lobbies.');
@@ -77,8 +77,8 @@ export class LobbysViewModelService {
 
   leave(id: number, lobbyName: string): void {
     this.lobbyService.leave(id).subscribe({
-      next: (res) => {
-        this.toast.info('Abandonaste el lobby', res.message ?? `Ya no eres parte de "${lobbyName}".`);
+      next: () => {
+        this.toast.info('Abandonaste el lobby', `Ya no eres parte de "${lobbyName}".`);
         this.loadAll();
       },
       error: (err) => this.toast.error('Error', err?.error?.error ?? 'No se pudo abandonar el lobby')

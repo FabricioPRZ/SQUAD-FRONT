@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  padding-top: 70px;
 }
 
 /* ── Overlay oscuro sobre fondo ── */
@@ -38,7 +39,7 @@
 .content-area {
   flex: 1;
   margin-left: 72px;
-  margin-right: 240px;   /* siempre deja espacio al user-sidebar */
+  margin-right: 240px;
   padding: 28px 24px;
   box-sizing: border-box;
   overflow-y: auto;
@@ -48,7 +49,7 @@
 }
 
 .content-area.chat-open {
-  margin-left: calc(72px + 480px);   /* sidebar + chat */
+  margin-left: calc(72px + 480px);
 }
 
 /* ===================================================
@@ -69,21 +70,19 @@
 
 .chat-panel-wrapper {
   width: 480px;
-  height: calc(100vh - 70px);
+  height: 100vh;
   position: fixed;
   left: 72px;
-  right: auto;
   top: 70px;
-  bottom: 0;
   border-right: 1.5px solid rgba(134, 21, 165, 0.4);
-  z-index: 1050;
+  z-index: 900;
   animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   margin: 0;
 }
 
 @keyframes slideInLeft {
-  from { transform: translateX(-100%); opacity: 0; }
+  from { transform: translateX(-480px); opacity: 0; }
   to   { transform: translateX(0);     opacity: 1; }
 }
 
@@ -93,7 +92,7 @@
 
 .user-sidebar-wrapper {
   width: 240px;
-  height: calc(100vh - 70px);
+  height: 100vh;
   position: fixed;
   right: 0;
   top: 70px;
@@ -102,19 +101,16 @@
 }
 
 /* ===================================================
-   Header y Sidebar de grupos sobre el fondo
+   Ajustes para header sticky
    =================================================== */
 
 :host ::ng-deep .app-header {
-  background: rgba(10, 8, 18, 0.8) !important;
+  background: rgba(10, 8, 18, 0.95) !important;
   backdrop-filter: blur(14px);
-  position: sticky;
-  top: 0;
-  z-index: 1100;
 }
 
 :host ::ng-deep .sidebar {
+  top: 70px !important;
   background: rgba(13, 11, 22, 0.85) !important;
   backdrop-filter: blur(14px);
-  --sidebar-top: 70px;
 }

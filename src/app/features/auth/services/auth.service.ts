@@ -1,29 +1,45 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { LoginRequest } from '../models/login-request';
-import { LoginResponse, UserResponse } from '../models/login-response';
-import { RegisterRequest } from '../models/register-request';
-import { environment } from '../../../../../environments/environment.dev';
+import { LoginRequest, RegisterRequest, UserResponse } from '@core/models/auth.model';
+import { environment } from '@env';
+
+const USER_KEY = 'squadup_user';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly api = `${environment.apiUrl}/api`;
+  private _currentUser = signal<UserResponse | null>(this.loadUser());
+  readonly currentUser = this._currentUser.asReadonly();
+  readonly isLoggedIn = computed(() => this._currentUser() !== null);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
-  login(payload: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(
-      `${this.api}/auth/login`,
+  private normalizeImageUrl(path: string | null): string | null {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    return `${environment.apiUrl}${path}`;
+  }
+
+  login(payload: LoginRequest): Observable<{ user: UserResponse }> {
+    return this.http.post<{ user: UserResponse }>(
+      `${environment.apiUrl}/api/auth/login`,
       payload,
       { withCredentials: true }
     ).pipe(
-      tap(res => this.saveSession(res.user))
+      tap({
+        next: (res) => {
+          this.saveSession(res.user);
+        },
+        error: (err) => {
+          console.error('Login error:', err);
+        }
+      })
     );
   }
 
-  register(payload: RegisterRequest): Observable<LoginResponse> {
+  register(payload: RegisterRequest): Observable<{ user: UserResponse }> {
     const formData = new FormData();
     formData.append('name', payload.name);
     formData.append('lastname', payload.lastname);
@@ -34,39 +50,43 @@ export class AuthService {
     if (payload.secondlastname)  formData.append('secondlastname', payload.secondlastname);
     if (payload.profile_picture) formData.append('profile_picture', payload.profile_picture);
 
-    return this.http.post<LoginResponse>(
-      `${this.api}/auth/register`,
+    return this.http.post<{ user: UserResponse }>(
+      `${environment.apiUrl}/api/auth/register`,
       formData,
       { withCredentials: true }
     ).pipe(
-      tap(res => this.saveSession(res.user))
+      tap({
+        next: (res) => {
+          this.saveSession(res.user);
+        },
+        error: (err) => {
+          console.error('Register error:', err);
+        }
+      })
     );
   }
 
-  logout(): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
-      `${this.api}/auth/logout`,
-      {},
-      { withCredentials: true }
-    ).pipe(
-      tap(() => this.clearSession())
-    );
-  }
-
-  getUser(): UserResponse | null {
-    const raw = localStorage.getItem('user');
-    return raw ? JSON.parse(raw) : null;
-  }
-
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('user');
+  logout(): void {
+    this.http.post(`${environment.apiUrl}/api/auth/logout`, {}, { withCredentials: true }).subscribe();
+    localStorage.removeItem(USER_KEY);
+    this._currentUser.set(null);
   }
 
   private saveSession(user: UserResponse): void {
-    localStorage.setItem('user', JSON.stringify(user));
+    const normalizedUser = {
+      ...user,
+      profile_picture: this.normalizeImageUrl(user.profile_picture)
+    };
+    localStorage.setItem(USER_KEY, JSON.stringify(normalizedUser));
+    this._currentUser.set(normalizedUser);
   }
 
-  private clearSession(): void {
-    localStorage.removeItem('user');
+  private loadUser(): UserResponse | null {
+    try {
+      const raw = localStorage.getItem(USER_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
   }
 }

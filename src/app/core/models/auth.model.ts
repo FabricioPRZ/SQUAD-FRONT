@@ -1,24 +1,35 @@
-/** Payload para POST /api/auth/login */
+export interface UserResponse {
+  id: number;
+  name: string;
+  secondname: string | null;
+  lastname: string;
+  secondlastname: string | null;
+  email: string;
+  profile_picture: string | null;
+  createdAt: string;
+}
+
+export interface LoginResponse {
+  message: string;
+  user: UserResponse;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
-/** Payload para POST /api/auth/register */
 export interface RegisterRequest {
-  fullName: string;
-  username: string;
+  name: string;
+  lastname: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  secondname?: string;
+  secondlastname?: string;
+  profile_picture?: File;
 }
 
-/** Respuesta de ambos endpoints de autenticación */
 export interface AuthResponse {
-  token: string;
-  tokenType: string;
-  userId: number;
-  username: string;
-  email: string;
-  avatarUrl?: string;
+  message: string;
+  user: UserResponse;
 }

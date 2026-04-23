@@ -1,34 +1,35 @@
 <div class="home-container">
-  <!-- Overlay oscuro sobre el fondo -->
   <div class="bg-overlay"></div>
 
-  <!-- Header en la parte superior -->
   <app-header [isMinimal]="false"></app-header>
 
   <div class="main-layout">
-    <!-- Sidebar izquierdo: grupos -->
-    <app-sidebar (groupSelected)="vm.selectGroup($event)"></app-sidebar>
+    <app-sidebar (groupSelected)="onGroupSelected($event)"></app-sidebar>
 
-    <!-- Panel de Chat (izquierdo, aparece al seleccionar grupo) -->
-    @if (isChatOpen && vm.selectedGroup()) {
+    <!-- Panel de Chat (modal lateral izquierdo) -->
+    @if (selectedGroup()) {
       <aside class="chat-panel-wrapper">
-        <app-chat
-          [group]="vm.selectedGroup()!"
-          (closeChat)="vm.closeChat()">
+        <app-chat 
+          [lobbyId]="+selectedGroup()!.id" 
+          (closeChat)="selectedGroup.set(null)">
         </app-chat>
       </aside>
     }
 
-    <!-- Feed de publicaciones (columna central) -->
-    <main class="content-area" [class.chat-open]="isChatOpen">
+    <main class="content-area" [class.chat-open]="selectedGroup()">
       <div class="feed-column">
-        @for (post of vm.posts(); track post.id) {
-          <app-card [post]="post"></app-card>
-        }
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <p>Selecciona un lobby para chatear</p>
+          <a routerLink="/lobbys" class="action-link">Ver mis Lobbys</a>
+        </div>
       </div>
     </main>
 
-    <!-- Sidebar derecho: opciones del usuario (siempre visible) -->
     <aside class="user-sidebar-wrapper">
       <app-user-sidebar (optionSelected)="onUserOption($event)"></app-user-sidebar>
     </aside>

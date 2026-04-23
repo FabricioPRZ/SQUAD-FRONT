@@ -1,7 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { RegisterRequest } from '../models/register-request';
+import { RegisterRequest } from '@core/models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class RegisterViewModelService {

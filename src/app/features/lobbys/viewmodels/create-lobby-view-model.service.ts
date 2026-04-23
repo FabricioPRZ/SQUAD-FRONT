@@ -3,21 +3,20 @@ import { Router } from '@angular/router';
 import { LobbyService } from '../services/lobby.service';
 import { LobbyRequest } from '../models/lobby-request';
 import { ToastService } from '../../../shared/services/toast.service';
-import { environment } from '../../../../../environments/environment.dev';
 
 @Injectable({ providedIn: 'root' })
 export class CreateLobbyViewModelService {
 
-  private _isEditMode  = signal(false);
-  private _editLobbyId = signal<number | null>(null);
+  private _isEditMode   = signal(false);
+  private _editLobbyId  = signal<number | null>(null);
 
-  private _name        = signal('');
-  private _description = signal('');
-  private _imageFile   = signal<File | null>(null);
+  private _name         = signal('');
+  private _description  = signal('');
+  private _imageFile    = signal<File | null>(null);
   private _imagePreview = signal<string | null>(null);
 
-  private _loading     = signal(false);
-  private _error       = signal<string | null>(null);
+  private _loading      = signal(false);
+  private _error        = signal<string | null>(null);
 
   readonly isEditMode   = this._isEditMode.asReadonly();
   readonly editLobbyId  = this._editLobbyId.asReadonly();
@@ -57,11 +56,11 @@ export class CreateLobbyViewModelService {
     this._loading.set(true);
 
     this.lobbyService.getById(id).subscribe({
-      next: ({ lobby }) => {
+      next: (lobby) => {
         this._name.set(lobby.name);
         this._description.set(lobby.description ?? '');
         if (lobby.image) {
-          this._imagePreview.set(`${environment.apiUrl}/${lobby.image}`);
+          this._imagePreview.set(lobby.image);
         }
         this._loading.set(false);
       },
@@ -85,7 +84,7 @@ export class CreateLobbyViewModelService {
 
     if (this._isEditMode() && this._editLobbyId()) {
       this.lobbyService.update(this._editLobbyId()!, payload).subscribe({
-        next: ({ lobby }) => {
+        next: (lobby) => {
           this._loading.set(false);
           this.toast.success('Lobby actualizado', `Los cambios en "${lobby.name}" se guardaron.`);
           setTimeout(() => this.router.navigate(['/lobbys']), 1000);
@@ -98,7 +97,7 @@ export class CreateLobbyViewModelService {
       });
     } else {
       this.lobbyService.create(payload).subscribe({
-        next: ({ lobby }) => {
+        next: (lobby) => {
           this._loading.set(false);
           this.toast.success('Lobby creado', `"${lobby.name}" fue creado con éxito.`);
           setTimeout(() => this.router.navigate(['/lobbys']), 1000);

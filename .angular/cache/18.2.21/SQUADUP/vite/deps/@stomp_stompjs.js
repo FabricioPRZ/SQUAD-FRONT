@@ -1,7 +1,7 @@
 import {
   __async,
   __commonJS
-} from "./chunk-3OV72XIM.js";
+} from "./chunk-4MWRP73S.js";
 
 // node_modules/@stomp/stompjs/bundles/stomp.umd.js
 var require_stomp_umd = __commonJS({

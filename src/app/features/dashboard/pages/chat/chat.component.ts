@@ -1,35 +1,46 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ElementRef, ViewChild, OnDestroy, effect } from '@angular/core';
+import { Component, OnDestroy, ElementRef, ViewChild, effect, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Group } from '../../../../shared/components/sidebar/sidebar.component';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ChatViewModelService } from '../../viewmodels/chat-view-model.service';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements OnChanges, OnDestroy {
-  @Input() group!: Group;
-  @Output() closeChat = new EventEmitter<void>();
-
+export class ChatComponent implements OnInit, OnDestroy {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
   @ViewChild('fileInput') fileInput!: ElementRef;
 
+  @Input() lobbyId: number | null = null;
+  @Output() closeChat = new EventEmitter<void>();
+
   newMessage = '';
 
-  constructor(public vm: ChatViewModelService) {
+  constructor(
+    public vm: ChatViewModelService,
+    private route: ActivatedRoute
+  ) {
     effect(() => {
       this.vm.messages();
       setTimeout(() => this.scrollToBottom(), 100);
     });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['group'] && this.group) {
-      this.vm.init(Number(this.group.id));
+  ngOnInit() {
+    if (this.lobbyId) {
+      this.vm.init(this.lobbyId);
+    } else {
+      this.route.paramMap.subscribe(params => {
+        const id = params.get('id');
+        if (id) {
+          this.lobbyId = Number(id);
+          this.vm.init(this.lobbyId);
+        }
+      });
     }
   }
 
@@ -38,8 +49,8 @@ export class ChatComponent implements OnChanges, OnDestroy {
   }
 
   sendMessage() {
-    if (!this.newMessage.trim()) return;
-    this.vm.sendMessage(Number(this.group.id), this.newMessage.trim(), 'text');
+    if (!this.newMessage.trim() || !this.lobbyId) return;
+    this.vm.sendMessage(this.lobbyId, this.newMessage.trim(), 'text');
     this.newMessage = '';
   }
 
@@ -62,13 +73,15 @@ export class ChatComponent implements OnChanges, OnDestroy {
     const reader = new FileReader();
     reader.onload = (e) => {
       const base64 = e.target?.result as string;
-      this.vm.sendMessage(Number(this.group.id), base64, 'image');
+      if (this.lobbyId) {
+        this.vm.sendMessage(this.lobbyId, base64, 'image');
+      }
     };
     reader.readAsDataURL(file);
-    input.value = ''; // reset para poder subir el mismo archivo de nuevo
+    input.value = '';
   }
 
-  close() {
+  onClose() {
     this.closeChat.emit();
   }
 

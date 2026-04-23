@@ -1,98 +1,130 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { LobbyRequest } from '../models/lobby-request';
-import { LobbyResponse, LobbyMemberResponse } from '../models/lobby-response';
-import { environment } from '../../../../../environments/environment.dev';
+import { Observable, map } from 'rxjs';
+import { AuthService } from '@features/auth/services/auth.service';
+import { environment } from '@env';
+import { LobbyResponse } from '../models/lobby-response';
+
+export interface LobbyRequest {
+  name: string;
+  description?: string;
+  image?: File;
+}
+
+export interface Member {
+  id:        string;
+  nickname:  string;
+  avatarUrl?: string;
+  role:      'owner' | 'member';
+  joinedAt:  Date;
+}
 
 @Injectable({ providedIn: 'root' })
 export class LobbyService {
 
-  private readonly api = `${environment.apiUrl}/api/lobbys`;
+  private readonly api = `${environment.apiUrl}/api`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
-  create(payload: LobbyRequest): Observable<{ message: string; lobby: LobbyResponse }> {
+  private normalizeImageUrl(path: string | null): string | null {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    return `${environment.apiUrl}${path}`;
+  }
+
+  private normalizeLobby(lobby: LobbyResponse): LobbyResponse {
+    return {
+      ...lobby,
+      image: this.normalizeImageUrl(lobby.image)
+    };
+  }
+
+  getAll(): Observable<LobbyResponse[]> {
+    return this.http.get<{ lobbys: LobbyResponse[] } | LobbyResponse[]>(`${this.api}/lobbys`).pipe(
+      map(res => {
+        const lobbys = Array.isArray(res) ? res : (res?.lobbys ?? []);
+        return lobbys.map(l => this.normalizeLobby(l));
+      })
+    );
+  }
+
+  getById(id: number): Observable<LobbyResponse> {
+    return this.http.get<LobbyResponse>(`${this.api}/lobbys/${id}`).pipe(
+      map(lobby => this.normalizeLobby(lobby))
+    );
+  }
+
+  getMyLobbies(): Observable<LobbyResponse[]> {
+    return this.http.get<{ lobbys: LobbyResponse[] } | LobbyResponse[]>(`${this.api}/lobbys/my`).pipe(
+      map(res => {
+        const lobbys = Array.isArray(res) ? res : (res?.lobbys ?? []);
+        return lobbys.map(l => this.normalizeLobby(l));
+      })
+    );
+  }
+
+  getJoinedLobbies(): Observable<LobbyResponse[]> {
+    return this.http.get<{ lobbys: LobbyResponse[] } | LobbyResponse[]>(`${this.api}/lobbys/joined`).pipe(
+      map(res => {
+        const lobbys = Array.isArray(res) ? res : (res?.lobbys ?? []);
+        return lobbys.map(l => this.normalizeLobby(l));
+      })
+    );
+  }
+
+  create(req: LobbyRequest): Observable<LobbyResponse> {
     const formData = new FormData();
-    formData.append('name', payload.name);
-    if (payload.description) formData.append('description', payload.description);
-    if (payload.image)       formData.append('image', payload.image);
+    formData.append('name', req.name);
+    if (req.description) formData.append('description', req.description);
+    if (req.image) formData.append('image', req.image);
 
-    return this.http.post<{ message: string; lobby: LobbyResponse }>(
-      this.api,
-      formData,
-      { withCredentials: true }
+    return this.http.post<LobbyResponse>(`${this.api}/lobbys`, formData).pipe(
+      map(lobby => this.normalizeLobby(lobby))
     );
   }
 
-  getAll(): Observable<{ lobbys: LobbyResponse[] }> {
-    return this.http.get<{ lobbys: LobbyResponse[] }>(
-      this.api,
-      { withCredentials: true }
-    );
-  }
-
-  getMyLobbies(): Observable<{ lobbys: LobbyResponse[] }> {
-    return this.http.get<{ lobbys: LobbyResponse[] }>(
-      `${this.api}/my`,
-      { withCredentials: true }
-    );
-  }
-
-  getById(id: number): Observable<{ lobby: LobbyResponse }> {
-    return this.http.get<{ lobby: LobbyResponse }>(
-      `${this.api}/${id}`,
-      { withCredentials: true }
-    );
-  }
-
-  update(id: number, payload: LobbyRequest): Observable<{ message: string; lobby: LobbyResponse }> {
+  update(id: number, req: LobbyRequest): Observable<LobbyResponse> {
     const formData = new FormData();
-    formData.append('name', payload.name);
-    if (payload.description) formData.append('description', payload.description);
-    if (payload.image)       formData.append('image', payload.image);
+    formData.append('name', req.name);
+    if (req.description) formData.append('description', req.description);
+    if (req.image) formData.append('image', req.image);
 
-    return this.http.put<{ message: string; lobby: LobbyResponse }>(
-      `${this.api}/${id}`,
-      formData,
-      { withCredentials: true }
+    return this.http.put<LobbyResponse>(`${this.api}/lobbys/${id}`, formData).pipe(
+      map(lobby => this.normalizeLobby(lobby))
     );
   }
 
-  delete(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(
-      `${this.api}/${id}`,
-      { withCredentials: true }
-    );
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.api}/lobbys/${id}`);
   }
 
-  join(id: number): Observable<{ message: string; member: LobbyMemberResponse }> {
-    return this.http.post<{ message: string; member: LobbyMemberResponse }>(
-      `${this.api}/${id}/join`,
-      {},
-      { withCredentials: true }
-    );
+  join(id: number): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.api}/lobbys/${id}/join`, {});
   }
 
-  leave(id: number): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
-      `${this.api}/${id}/leave`,
-      {},
-      { withCredentials: true }
-    );
+  leave(id: number): Observable<void> {
+    return this.http.post<void>(`${this.api}/lobbys/${id}/leave`, {});
   }
 
-  getMembers(id: number): Observable<{ members: LobbyMemberResponse[] }> {
-    return this.http.get<{ members: LobbyMemberResponse[] }>(
-      `${this.api}/${id}/members`,
-      { withCredentials: true }
-    );
+  reviewRequest(requestId: number, accept: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.api}/lobbys/requests/${requestId}`, {}, {
+      params: { accept: String(accept) }
+    });
+  }
+
+  getByTag(tag: string): Observable<LobbyResponse[]> {
+    return this.http.get<LobbyResponse[]>(`${this.api}/lobbys/by-tag`, {
+      params: { tag }
+    });
   }
 
   withOwnerFlag(lobbies: LobbyResponse[]): LobbyResponse[] {
-    const raw    = localStorage.getItem('user');
-    const userId = raw ? JSON.parse(raw).id : null;
-    if (!userId) return lobbies;
-    return lobbies.map(l => ({ ...l, isOwner: l.owner_id === userId }));
+    if (!Array.isArray(lobbies)) return [];
+    const currentUser = this.auth.currentUser();
+    const currentName = currentUser?.name ?? '';
+    return lobbies.map(l => ({ 
+      ...l, 
+      isOwner: l.ownerUsername === currentName || l.owner_id === currentUser?.id 
+    }));
   }
 }

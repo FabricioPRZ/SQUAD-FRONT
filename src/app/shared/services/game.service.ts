@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '@env';
 
-const API = 'http://localhost:8080/api/games';
+const API = `${environment.apiUrl}/api/games`;
 
 export interface GameResponse {
   id: number;

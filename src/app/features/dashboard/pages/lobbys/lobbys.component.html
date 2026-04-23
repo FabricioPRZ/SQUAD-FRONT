@@ -43,10 +43,7 @@
       <div class="lobbies-grid">
         @for (lobby of vm.filteredLobbies(); track lobby.id) {
           <app-lobby-card
-            [lobby]="toLobbyCard(lobby)"
-            (edit)="onEdit(lobby)"
-            (delete)="onDelete(lobby)"
-            (leave)="onLeave(lobby)">
+            [lobby]="toLobbyCard(lobby)">
           </app-lobby-card>
         }
       </div>

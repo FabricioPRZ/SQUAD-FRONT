@@ -1,8 +1,8 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { PostsService } from '../../../shared/services/posts.service';
-import { ToastService } from '../../../shared/services/toast.service';
-import { AuthService } from '../../auth/services/auth.service';
-import { Post } from '../../../shared/components/card/card.component';
+import { PostsService } from '@shared/services/posts.service';
+import { ToastService } from '@shared/services/toast.service';
+import { AuthService } from '@features/auth/services/auth.service';
+import { Post } from '@shared/components/card/card.component';
 
 export type FilterType = 'saved' | 'own';
 
@@ -57,7 +57,7 @@ export class SavedPostsViewModelService {
 
   // GET /api/posts/user/:id — mis publicaciones
   private loadMine(): void {
-    const userId = this.auth.getUser()?.id;
+    const userId = this.auth.currentUser()?.id;
 
     if (!userId) {
       this.toast.error('Error', 'No se pudo identificar al usuario.');

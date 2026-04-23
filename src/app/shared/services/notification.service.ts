@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
+import { environment } from '@env';
 
-const API = 'http://localhost:8080/api/notifications';
+const API = `${environment.apiUrl}/api/notifications`;
 
-/** Alineado con NotificationResponse del backend */
 export interface NotificationResponse {
   id: number;
+  user_id: number;
   type: string;
-  actorUsername: string;
-  actorAvatar?: string;
-  payload?: Record<string, unknown>;
-  read: boolean;
+  payload?: Record<string, unknown> | null;
+  is_read: boolean;
   createdAt: string;
 }
 
@@ -20,19 +19,23 @@ export class NotificationService {
 
   constructor(private http: HttpClient) {}
 
-  /** GET /api/notifications — Últimas 30 notificaciones */
-  getAll(): Observable<NotificationResponse[]> {
-    return this.http.get<NotificationResponse[]>(API);
+  getAll(): Observable<{ notifications: NotificationResponse[] }> {
+    return this.http.get<{ notifications: NotificationResponse[] }>(API, { withCredentials: true });
   }
 
-  /** GET /api/notifications/unread-count */
-  getUnreadCount(): Observable<number> {
-    return this.http.get<{ count: number }>(`${API}/unread-count`)
-      .pipe(map(res => res.count));
+  getUnreadCount(): Observable<{ count: number }> {
+    return this.http.get<{ count: number }>(`${API}/unread`, { withCredentials: true });
   }
 
-  /** PATCH /api/notifications/read-all */
+  markAsRead(id: number): Observable<void> {
+    return this.http.patch<void>(`${API}/${id}/read`, {}, { withCredentials: true });
+  }
+
   markAllRead(): Observable<void> {
-    return this.http.patch<void>(`${API}/read-all`, {});
+    return this.http.patch<void>(`${API}/read-all`, {}, { withCredentials: true });
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${API}/${id}`, { withCredentials: true });
   }
 }

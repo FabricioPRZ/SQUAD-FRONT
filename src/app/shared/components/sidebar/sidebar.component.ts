@@ -30,7 +30,7 @@ export class SidebarComponent implements OnInit {
   selectGroup(group: Group) {
     if (this.activeGroupId === group.id) {
       this.activeGroupId = null;
-      this.groupSelected.emit({ id: '', name: '', imageUrl: '' }); // señal de cierre
+      this.groupSelected.emit({ id: '', name: '', imageUrl: '' });
     } else {
       this.activeGroupId = group.id;
       this.groupSelected.emit(group);

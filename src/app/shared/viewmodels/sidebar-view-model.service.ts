@@ -1,28 +1,22 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { LobbyService, LobbyResponse } from '../services/lobby.service';
+import { LobbyService } from '@features/lobbys/services/lobby.service';
+import { LobbyResponse } from '@features/lobbys/models/lobby-response';
 import { Group } from '../components/sidebar/sidebar.component';
-import { forkJoin } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class SidebarViewModelService {
-  private _loading = signal<boolean>(true);
+  private _loading   = signal<boolean>(true);
   private _myLobbies = signal<LobbyResponse[]>([]);
-  private _joinedLobbies = signal<LobbyResponse[]>([]);
 
   readonly loading = this._loading.asReadonly();
-  
-  // Combina ambos tipos de lobbies para la lista y los convierte al formato Group de la UI
-  readonly groups = computed<Group[]>(() => {
-    const all = [...this._myLobbies(), ...this._joinedLobbies()];
-    // Evitar duplicados por si el API devuelve el mismo
-    const uniqueIds = Array.from(new Set(all.map(l => l.id)));
-    const unique = uniqueIds.map(id => all.find(l => l.id === id)!);
 
-    return unique.map(lobby => ({
-      id: String(lobby.id),
-      name: lobby.name,
-      imageUrl: lobby.imageUrl || 'https://via.placeholder.com/150'
+  readonly groups = computed<Group[]>(() => {
+    const lobbies = this._myLobbies() ?? [];
+    return lobbies.map(lobby => ({
+      id:       String(lobby.id),
+      name:     lobby.name,
+      imageUrl: lobby.image ?? 'https://via.placeholder.com/150'
     }));
   });
 
@@ -33,19 +27,13 @@ export class SidebarViewModelService {
 
   loadGroups(): void {
     this._loading.set(true);
-    // Request both owned and joined lobbies
-    forkJoin({
-      my: this.lobbyService.getMyLobbies(),
-      joined: this.lobbyService.getJoinedLobbies()
-    }).subscribe({
-      next: (res) => {
-        this._myLobbies.set(res.my || []);
-        this._joinedLobbies.set(res.joined || []);
+    this.lobbyService.getMyLobbies().subscribe({
+      next: (lobbies) => {
+        this._myLobbies.set(lobbies ?? []);
         this._loading.set(false);
       },
       error: () => {
         this._myLobbies.set([]);
-        this._joinedLobbies.set([]);
         this._loading.set(false);
       }
     });

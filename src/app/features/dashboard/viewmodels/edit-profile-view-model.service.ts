@@ -36,16 +36,24 @@ export class EditProfileViewModelService {
 
   private loadProfile(): void {
     this._loading.set(true);
-    // Ideally we should get the email from the auth state, but for now we'll just get the profile
     this.profileService.getMyProfile().subscribe({
-      next: (profile: ProfileResponse) => {
-        this._name.set(profile.fullName);
-        this._username.set(profile.username);
-        this._avatarUrl.set(profile.avatarUrl);
-        // Note: ProfileResponse doesn't include email or bio currently.
+      next: (response: any) => {
+        console.log('Profile raw response:', response);
+        
+        // Handle both { user: {...} } and direct {...} formats
+        const profile = response.user || response;
+        console.log('Profile data:', profile);
+        
+        // Combinar name + lastname para fullName
+        const fullName = [profile.name, profile.lastname].filter(Boolean).join(' ');
+        this._name.set(fullName || 'Usuario');
+        this._username.set(''); // No hay username en backend
+        this._email.set(profile.email || 'Sin email');
+        this._avatarUrl.set(profile.profile_picture || profile.avatarUrl || null);
         this._loading.set(false);
       },
-      error: () => {
+      error: (err) => {
+        console.error('Profile load error:', err);
         this.toast.error('Error', 'No se pudo cargar el perfil.');
         this._loading.set(false);
       }
@@ -83,9 +91,16 @@ export class EditProfileViewModelService {
 
     if (ok) {
       this._updating.set(true);
+      
+      // Separar nombre y apellido
+      const parts = this._name().trim().split(' ');
+      const name = parts[0];
+      const lastname = parts.slice(1).join(' ') || '';
+      
       const req: UserProfileUpdateRequest = {
-        fullName: this._name().trim(),
-        avatarUrl: this._avatarUrl() || undefined
+        name: name,
+        lastname: lastname,
+        profile_picture: this._avatarUrl() || undefined
       };
 
       this.profileService.updateMyProfile(req).subscribe({
