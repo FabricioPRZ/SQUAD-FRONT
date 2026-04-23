@@ -6,7 +6,7 @@
     "prestart": "node create-env.js",
     "prebuild": "node create-env.js",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npx ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
