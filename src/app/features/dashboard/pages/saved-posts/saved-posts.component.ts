@@ -28,7 +28,7 @@ export class SavedPostsComponent implements OnInit {
       title: '¿Eliminar publicación?',
       message: 'Esta publicación será eliminada permanentemente.',
       confirmText: 'Sí, eliminar',
-      cancelText: 'Cancelar',
+      cancelText: 'cancelar',
       type: 'danger'
     });
 
